@@ -1,0 +1,1 @@
+%%%% Das ist das Startskript für die Matlab-Hausaufgabe %%%%%%%%

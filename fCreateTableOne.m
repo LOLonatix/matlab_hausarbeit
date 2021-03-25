@@ -1,5 +1,3 @@
-test1 = 5;
-test2 = 10;
-if test1==6 | test2 ==111
-    hey = 'hello'
-end
+%%Table 1
+%Script used to call the functions needed to fill table 1 and in the
+%following create the table itself

@@ -2,7 +2,10 @@ function [dMeanGrossProfits,dSDGrossProfits,d1stQGrossProfits,d25stQGrossProfits
 cFieldNames = fieldnames(currentCountryStructure);
 for i =1:numel(cFieldNames)
    cAGrossProfit={};
-   cAGrossProfit=[cAGrossProfit; currentCountryStructure.(cFieldNames{i}).SALES-currentCountryStructure.(cFieldNames{i}).COGS./currentCountryStructure.(cFieldNames{i}).TOTAL_ASSETS];  
+   cASales = currentCountryStructure.(cFieldNames{i}).SALES;
+   cACOGS = currentCountryStructure.(cFieldNames{i}).COGS;
+   cATotal_Assets= currentCountryStructure.(cFieldNames{i}).TOTAL_ASSETS;
+   cAGrossProfit=[cAGrossProfit; cASales-cACOGS./cATotal_Assets];  
 end
 dMeanGrossProfits = mean(cell2mat(cAGrossProfit),'omitnan');
 dSDGrossProfits = std(cell2mat(cAGrossProfit),'omitnan');

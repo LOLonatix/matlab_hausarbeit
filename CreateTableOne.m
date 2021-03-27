@@ -49,10 +49,16 @@ for i=1:dNumberCountries
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
         end
         
-        %Test fMSCImarket
+%read contryname from filename and transform it into string
 sName = string(regexprep(sCurrentCountryName,'.mat',''));
+%determine to which market the country belongs according to MSCI
 sMarket = fMSCImarket(sName);
-sMarket
+
+%Counting the minimal and maximal active firms in a country
+%function requires dAmountCompanies (total amount of firms in country),
+%cAllCompanyKeys (keys of the above mentioned firms to alter struct),
+%rCountryStructure (struct with the data of all firms)
+[dMinFirms,dMaxFirms]=fMinMaxFirms(dAmountCompanies,cAllCompanyKeys,rCountryStructure);
 end
 
 

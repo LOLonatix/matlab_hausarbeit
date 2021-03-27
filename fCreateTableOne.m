@@ -48,9 +48,11 @@ for i=1:dNumberCountries
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
         end
-
-
-%Test fMSCImarket
+        
+        %Test fMSCImarket
 sName = string(regexprep(sCurrentCountryName,'.mat',''));
 sMarket = fMSCImarket(sName);
+sMarket
 end
+
+

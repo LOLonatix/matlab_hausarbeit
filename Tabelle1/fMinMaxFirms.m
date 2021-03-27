@@ -5,3 +5,5 @@ outputArg1 = inputArg1;
 outputArg2 = inputArg2;
 end
 
+%Function get all keys(fieldnames) - for key in countrystruct -> mv
+

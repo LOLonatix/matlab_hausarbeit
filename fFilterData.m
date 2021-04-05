@@ -38,7 +38,23 @@ function fFilterData()
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
         
-        % cells with company keys to be removed after the filtering process
+        %% Calculate new parameters
+        % Take functions from table2 and use them to calculate the
+        % variables that have to be filtered for table one.
+        % They are added to the country struct as vector (double array)
+        
+        %% New function to check if parameters have missing values
+        % NANs within the values after the begin and before the end of
+        % data availability flag the firm for deleting
+        
+        %% New function checking whether all the data start at the same time
+        % If the variables do not start and end at the same time, it has to
+        % be assumed that there are missing values, therefore the company
+        % is flagged for deleting - also the start and end date of data
+        % availability are recorded for table1 (save in a separate struct
+        % element)
+        
+        %% cells with company keys to be removed after the filtering process
         cCompanyKeysToBeRemoved = {};
         
         % iterate over companies
@@ -69,8 +85,8 @@ function fFilterData()
     end
 end
 
-% the real filter process is written as an extra function for more clearity
-% in the code
+%% the real filter process is written as an extra function for more clarity in the code
+% write functions into own file?
 function bReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
     sCountry = sCountry(1:end-4);
     % set to false, set to true to remove

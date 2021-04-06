@@ -6,7 +6,7 @@ clear; clc;
 
 % Adding folder with functions for the table to the paths so that the
 % functions can be used.
-addpath(genpath('Tabelle1'));
+addpath(genpath('folder_Tabelle1'));
 
 %% Reading required files
 % Read the file containing the dates of the TS items to transform the start

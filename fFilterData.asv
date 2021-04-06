@@ -64,7 +64,7 @@ function fFilterData()
         end
         
         % after deleting the companies, calculate the return and call the
-        % dynamic filters (since indices were removed, calc. length again)
+        % dynamic filters (si
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
         
@@ -72,9 +72,8 @@ function fFilterData()
             % get current key and the respective structure
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
-            % calculate the return
             rCountryStructure.(sCurrentCompanyKey).RETURN = rCurrentCompany.TRI(2:end,:)./rCurrentCompany.TRI(1:end-1,:)-1;
-            % call the dynamic screen
+            
             rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCurrentCompany);
         end
         

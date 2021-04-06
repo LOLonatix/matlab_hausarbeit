@@ -24,8 +24,7 @@ function fFilterData()
         sCurrentCountryName = cell2mat(cCountryNames(i));
         sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
         load(sPath2Country, 'rCountryStructure')
-      
-        
+     
         if lKeysLoaded ~= true
             load(sPath2Country, 'cListKeys');
             lKeysLoaded = true;
@@ -38,7 +37,23 @@ function fFilterData()
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
         
-        % cells with company keys to be removed after the filtering process
+        %% Calculate new parameters
+        % Take functions from table2 and use them to calculate the
+        % variables that have to be filtered for table one.
+        % They are added to the country struct as vector (double array)
+        
+        %% New function to check if parameters have missing values
+        % NANs within the values after the begin and before the end of
+        % data availability flag the firm for deleting
+        
+        %% New function checking whether all the data start at the same time
+        % If the variables do not start and end at the same time, it has to
+        % be assumed that there are missing values, therefore the company
+        % is flagged for deleting - also the start and end date of data
+        % availability are recorded for table1 (save in a separate struct
+        % element)
+        
+        %% cells with company keys to be removed after the filtering process
         cCompanyKeysToBeRemoved = {};
         
         % iterate over companies
@@ -75,7 +90,7 @@ function fFilterData()
             % calculate the return
             rCountryStructure.(sCurrentCompanyKey).RETURN = rCurrentCompany.TRI(2:end,:)./rCurrentCompany.TRI(1:end-1,:)-1;
             % call the dynamic screen
-            rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCurrentCompany);
+            %rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCurrentCompany);
         end
         
         % save the filtered Data under "folder_FilteredData"
@@ -86,6 +101,9 @@ end
 
 % the real filter process is written as an extra function for more clearity
 % in the code
+
+
+
 function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
     sCountry = sCountry(1:end-4);
     % set to false, set to true to remove
@@ -164,7 +182,7 @@ function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
     
     
     % now filter if values are missing (caption of table 1)
-    % citation Ball 2016: sample consists of firms with non-missing market value of equity (MV), 
+    % citation Ball 2016: sample consists of firms with non-missing market value of equity (COMMON EQUITY), 
     % book-to-market (Book equity/market equity --> seen as Common Equity+Deferred Taxes/ MV) 
     % gross profit (Sales-COGS/Total Assets), book value of total assets (Total Assets),
     % current month returns and returns for the prior one-year (calc. via TRI)
@@ -176,17 +194,18 @@ function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
             lReturn = true;
         elseif length(rCompany.TOTAL_ASSETS) == 1 | length(rCompany.COMMON_EQUITY) == 1 
             lReturn = true;
-        elseif length(rCompany.COGS) == 1 | length(rCompany.DEFERRED_TAXES) == 1
+        elseif length(rCompany.COGS) == 1 | length(rCompany.DEFERRED_TAXES) == 1 | length(rCompany.TRI) == 1
            lReturn = true;
         end
     else
         lReturn = true;
-    end
-    
+    end 
 end
+
 
 function rReturnCompany = fDynamicScreening(rCompany)
 end
+
 
 function rStringFiltersStatic = fCreateFilterStrings()
     rStringFiltersStatic = struct;

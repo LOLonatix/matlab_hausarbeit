@@ -37,23 +37,7 @@ function fFilterData()
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
         
-        %% Calculate new parameters
-        % Take functions from table2 and use them to calculate the
-        % variables that have to be filtered for table one.
-        % They are added to the country struct as vector (double array)
-        
-        %% New function to check if parameters have missing values
-        % NANs within the values after the begin and before the end of
-        % data availability flag the firm for deleting
-        
-        %% New function checking whether all the data start at the same time
-        % If the variables do not start and end at the same time, it has to
-        % be assumed that there are missing values, therefore the company
-        % is flagged for deleting - also the start and end date of data
-        % availability are recorded for table1 (save in a separate struct
-        % element)
-        
-        %% cells with company keys to be removed after the filtering process
+        % cells with company keys to be removed after the filtering process
         cCompanyKeysToBeRemoved = {};
         
         % iterate over companies
@@ -246,20 +230,25 @@ end
 
 function rStringFiltersStatic = fCreateFilterStrings()
     rStringFiltersStatic = struct;
-    vCountryNames = ["ARGENTINA", "PHILIPPINES"];
-    vCountryGGISN = ["AR", "PH"];
-    vCountryCurrency = ["AP", "PP"];
+    %vCountryNames = ["ARGENTINA", "PHILIPPINES"];
+    %vCountryGGISN = ["AR", "PH"];
+    %vCountryCurrency = ["AP", "PP"];
+    rID = ISINCurrencyStruct(); % as the ISIN and the currency are written in cell array, use the function 'ismember' to see if the item corresponds
 
     dAmountCountries = length(vCountryNames);
-    for i=1:dAmountCountries
-        rStringFiltersStatic.(vCountryNames(i)).GGISN = [vCountryGGISN(i)];
-        rStringFiltersStatic.(vCountryNames(i)).CURRENCY = [vCountryCurrency(i)];
-        rStringFiltersStatic.(vCountryNames(i)).COUNTRY_SPECIFIC_FILTER = NaN;
+    for i=1:dAmountCountries % Do we need the GEOGN and the GEOLN?
+        sCountryName = vCountryNames(i); % makes us independ from having all country data available
+        %rStringFiltersStatic.(vCountryNames(i)).GGISN = [vCountryGGISN(i)];
+        %rStringFiltersStatic.(vCountryNames(i)).CURRENCY = [vCountryCurrency(i)];
+        rStringFiltersStatic.sCountryName.GGISN = rID.sCountryName.ISIN;
+        rStringFiltersStatic.sCountryName.CURRENCY = rID.sCountryName.CURRENCY;
+        rStringFiltersStatic.sCountryName.COUNTRY_SPECIFIC_FILTER = NaN;
     end
     % add further values with more then one currency/GGISN 
     lAllRawData = false;
     if lAllRawData == true
     % currencies for european countries other then euro are still missing
+    % --> still needed? As everything is added in the ISINCurrency-function
     rStringFiltersStatic.HONG_KONG.GGISN = [rStringFiltersStatic.HONG_KONG.GGISN, "BM", "KY"];
     rStringFiltersStatic.CZECH.GGISN = [rStringFiltersStatic.CZECH.GGISN, "CS"];
     rStringFiltersStatic.RUSSIA.CURRENCY = [rStringFiltersStatic.RUSSIA.CURRENCY, "USD"];

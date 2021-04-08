@@ -1,5 +1,6 @@
 function fLoadRawData()
     clear; clc; 
+    save_var_error = string;
     % Get a list of all files and folders in this folder.
     sPath2RawData = append(pwd, '\', 'folder_RawData');
     rFolders = dir(sPath2RawData);
@@ -11,7 +12,6 @@ function fLoadRawData()
         cCountryNames = cCountryNames(3:end);
     end 
    
-
     % get amount all folder/countrie_names
     dNumberCountries = length(cCountryNames);
 
@@ -34,7 +34,7 @@ function fLoadRawData()
         % and "_TS" lists of the same part
         sPath2Country = append(sPath2RawData, '\', sCurrentCountry);
         rFilesInCountry = dir(sPath2Country);
-        
+        test = sPath2Country
         % now take only the true files, removing the github folders and
         % tri-data folders
         lFilesToLoad = ~[rFilesInCountry.isdir];
@@ -61,8 +61,11 @@ function fLoadRawData()
             % find loading path via previous bool-matrix
             sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentStaticFile)));
             [~,~,cTemp]=xlsread(sLoadString);
-
+            
+            % remove empty rows (appear if [~,~,this_index] is used
+            cTemp(any(cellfun(@(x) any(isnan(x)),cTemp),2),:) = [];
             dSizeCTemp = size(cTemp);
+          
             % create list with "keys" from static request once
             if lBoolListKeys ~= true
                 for row=2:dSizeCTemp(2)
@@ -85,9 +88,9 @@ function fLoadRawData()
 
                 % use the 'COMPANY_NAME' as the struct.key
                 sCompanyString = fCellToString(cCurrentRow(1));
+       
                 rCountryStructure.(sCompanyString) = struct;
-
-
+          
                 % initialize as NaN to be able to skip empty lines in TS later
                 % on (created by datastream "$ERROR, value not found" 
                 for currentKey=1:dLenghtKeys
@@ -110,6 +113,7 @@ function fLoadRawData()
             % now load ts
             lCurrentTSFile = lCurrentPartFiles & lAllTsParts;
             % the loading process into cell-var cTemp
+            
             sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentTSFile)));
             sSheetNames = sheetnames(sLoadString);
 
@@ -125,16 +129,21 @@ function fLoadRawData()
                 dStep_size = str2double(sSheetString(sStepSize+4:end));
 
                 % load current sheet in var cTemp und cNumTemp
-                [cNumTemp,~,cTemp]=xlsread(sLoadString, current_sheet);
-                % delete first column, since it only holds constant dates             
-                cTemp(:,1) = [];
-                cNumTemp(:,1) = [];
+                [cNumTemp,cTemp,~]=xlsread(sLoadString, current_sheet);
+                % delete first column, since it only holds constant dates  
+               
+                if length(cTemp) < 25
+                    save_var_error = append(save_var_error, '___', sLoadString, '-', int2str(current_sheet));
+                else
+                    cTemp(:,1) = [];
+                    cNumTemp(:,1) = [];
+
+                    % get total amount colums in this sheet
+                    vSizeCTemp = size(cTemp);
+                    dColumnsCTemp = vSizeCTemp(2);
                 
-                % get total amount colums in this sheet
-                vSizeCTemp = size(cTemp);
-                dColumnsCTemp = vSizeCTemp(2);
-             
                 
+                    
                 % counter used to count steps within step_size. reset for each
                 % sheet
                 dCounter = 1;
@@ -146,6 +155,7 @@ function fLoadRawData()
 
                     % check first value, to skip  '#ERROR' and save time
                     sFirstValue = cell2mat(cTemp(1,column));
+                    
                     lErrorBool = contains(sFirstValue, '#ERROR');
 
                     if lErrorBool ~= true
@@ -177,6 +187,7 @@ function fLoadRawData()
                 end
                 % after finishing one sheet, use the next ts-item-keys 
                 dKeyCounter = dKeyCounter + dStep_size;
+                end
             end
         end
         
@@ -186,7 +197,7 @@ function fLoadRawData()
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
         sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
-        save(sSavePath, 'rCountryStructure', 'cListKeys');
+        save(sSavePath, 'rCountryStructure', 'cListKeys', 'save_var_error');
     end
    
 end
@@ -207,10 +218,11 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
     for i=1:dAmountParts
         % load the static order of companies and their key
         % create string "PART_NAME"
-        sCurrentPartString = append('PART', int2str(i));
+        sCurrentPartString = append('PART', int2str(i),'_');
         
         % find files only containing "PART_NAME"
         lCurrentPartFiles = contains(rFilesInTriFolder, sCurrentPartString);
+        
         % create bools for static/ts parts
         lAllStaticParts = contains(rFilesInTriFolder,'STATIC');
         lAllTsParts = contains(rFilesInTriFolder,'TS');
@@ -221,50 +233,51 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
         lCurrentTsFile =  lCurrentPartFiles & lAllTsParts;
 
         % find loading path via previous bool-matrix
+   
         sLoadStringStatic = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentStaticFile)));
         sLoadStringTs = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentTsFile)));
         
         % load ts and static data
-        [~,~,cTempStatic]=xlsread(sLoadStringStatic);
-        [cTempTs,~,~]=xlsread(sLoadStringTs);
-        
+        [~,~,cTextTS]=xlsread(sLoadStringStatic);
+        [cNumTS,~,~]=xlsread(sLoadStringTs);
+        cNumTS(any(cellfun(@(x) any(isnan(x)),cNumTS),2),:) = [];
+      
         % calculate the amount of companies
-        dAmountCompaniesStatic = size(cTempStatic);
+        dAmountCompaniesStatic = size(cTextTS);
         dAmountCompaniesStatic = dAmountCompaniesStatic(1);
         
-        dAmountCompaniesTs = size(cTempTs);
+        dAmountCompaniesTs = size(cNumTS);
         dAmountCompaniesTs = dAmountCompaniesTs(2);
         
         % only if the amount of companies is the same save the TRI-Data,
         % write error message otherwise
-        if dAmountCompaniesStatic == dAmountCompaniesTs
-            for p=2:dAmountCompaniesStatic
-                % use same function for creating struct.key string
-                sCompanyKey = fCellToString(cTempStatic(p,1));
-                % get vTriData
-                vTriData = cTempTs(:,p);
-                % save vTriData under tri key for sCompanyKey
-                if isfield(rCountryStructure, sCompanyKey) == true
-                    rCountryStructure.(sCompanyKey).TRI = vTriData;
-                % tri data was downloaded later on from datastream, so we 
-                % weren't sure whether the lists changed --> error message
-                else
-                    print = "Could not find company key"
-                    print = sCompanyKey
-                end
+        for p=2:dAmountCompaniesStatic
+            % use same function for creating struct.key string
+            sCompanyKey = fCellToString(cTextTS(p,1));
+            
+            % check if last tri-data-sets were 'ERROR' message, otherwise
+            % get tri-data
+            if p <= dAmountCompaniesTs
+                vTriData = cNumTS(:,p);
+            else
+                vTriData = NaN;
             end
-        else
-            % error message
-            print = "ERROR! amount ts/static data for TRI not the same!"
-            print = "TS:"
-            print = dAmountCompaniesTs
-            print = "STATIC"
-            print = dAmountCompaniesStatic
+            
+            % save vTriData under tri key for sCompanyKey
+            if isfield(rCountryStructure, sCompanyKey) == true
+                rCountryStructure.(sCompanyKey).TRI = vTriData;
+            % tri data was downloaded later on from datastream, so we 
+            % weren't sure whether the lists changed --> error message
+            else
+                print = "Could not find company key"
+                print = sCompanyKey
+            end
         end
     end
 end
 
 function working_string = fCellToString(input_cell)
+    
     working_string = cell2mat(input_cell);
     if isstring(working_string) ~= true
         working_string = string(working_string);
@@ -277,29 +290,29 @@ function working_string = fCellToString(input_cell)
         working_string = strcat('rNumber_', working_string);
         end
     end
-    % replace ':' with '_'
+    % replace ':' and '.' with '_'
     working_string = regexprep(working_string, ':', '_');
+    working_string = strrep(working_string, '.', '');
+    working_string = strrep(working_string, ';', '_');
     % replace '@' with 'at_'
     working_string = regexprep(working_string, '[@]', 'at_');
     % this one removes underscores from the beginning
     working_string = regexprep(working_string,'^_','','emptymatch');
     
-%     string = regexprep(string, ' +', '_');
-%     string = regexprep(string, '&+', '');
-%     string = regexprep(string, '[.]','');
-%     string = regexprep(string, '[/]','');
-%     string = regexprep(string, '[£]','');
-%     string = regexprep(string, '[:]','');
-%     string = regexprep(string, '[(]','');
-%     string = regexprep(string, '[)]','');
-%     string = regexprep(string, '['']','');
-%     string = regexprep(string, '[-]','');
-%     string = regexprep(string, '[0-9]', '');
-%     string = regexprep(string, '[@]', '');
-%     string = regexprep(string, '[+]', '');
-%     string = regexprep(string, '[$]', '');
-%     string = regexprep(string, '[,]', '');
-%     string = regexprep(string, '[%]', '');
+    working_string = regexprep(working_string, ' +', '_');
+    working_string = regexprep(working_string, '&+', '');
+    working_string = regexprep(working_string, '[/]','');
+    working_string = regexprep(working_string, '[£]','');
+    working_string = regexprep(working_string, '[:]','');
+    working_string = regexprep(working_string, '[(]','');
+    working_string = regexprep(working_string, '[)]','');
+    working_string = regexprep(working_string, '['']','');
+    working_string = regexprep(working_string, '[-]','');
+    working_string = regexprep(working_string, '[@]', '');
+    working_string = regexprep(working_string, '[+]', '');
+    working_string = regexprep(working_string, '[$]', '');
+    working_string = regexprep(working_string, '[,]', '');
+    working_string = regexprep(working_string, '[%]', '');
 %     % this one removes underscores from the beginning
 %     string = regexprep(string,'^_','','emptymatch');
 %     string = regexprep(string,'^_','','emptymatch');
@@ -338,7 +351,3 @@ end
 
    
   
-
-    
-   
-

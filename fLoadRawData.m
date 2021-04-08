@@ -240,7 +240,6 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
         % load ts and static data
         [~,~,cTextTS]=xlsread(sLoadStringStatic);
         [cNumTS,~,~]=xlsread(sLoadStringTs);
-        cNumTS(any(cellfun(@(x) any(isnan(x)),cNumTS),2),:) = [];
       
         % calculate the amount of companies
         dAmountCompaniesStatic = size(cTextTS);

@@ -1,7 +1,7 @@
 function fFilterData()
     clear; clc;
     
-    % missing: dynamic filtering, eu currencies
+    % eu currencies
     
     rStringFiltersStatic = fCreateFilterStrings;
     

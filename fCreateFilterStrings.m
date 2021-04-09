@@ -1,11 +1,11 @@
 function rStringFiltersStatic = fCreateFilterStrings(vCountryNames)
     rStringFiltersStatic = struct;
-    rID = ISINCurrencyStruct(); % as the ISIN and the currency are written in cell array, use the function 'ismember' to see if the item corresponds
+    rID = fIDStruct();
 
     dAmountCountries = length(vCountryNames);
     for i=1:dAmountCountries
         sCountryName = vCountryNames(i);
-        rStringFiltersStatic.sCountryName.GGISN = rID.sCountryName.ISIN;
+        rStringFiltersStatic.sCountryName.GGISN = rID.sCountryName.GGISN;
         rStringFiltersStatic.sCountryName.CURRENCY = rID.sCountryName.CURRENCY;
         rStringFiltersStatic.sCountryName.GEOGN = rID.sCountryName.GEOGN;
         rStringFiltersStatic.sCountryName.GEOLN = rID.sCountryName.GEOLN;

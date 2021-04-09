@@ -3,7 +3,7 @@ function fFilterData()
     
     % eu currencies
     
-    rStringFiltersStatic = fCreateFilterStrings;
+    rStringFiltersStatic = fCreateFilterStrings(vCountryNames); % Wo kommt die Variable her?
     
     % Get a list of all files and folders in this folder.
     sPath2ImportedData = append(pwd, '\', 'folder_ImportedData\');

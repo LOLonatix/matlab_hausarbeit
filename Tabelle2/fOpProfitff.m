@@ -11,13 +11,7 @@ for i =1:numel(cFieldNames)
    %hier weiter
    cAOpProfitff=[cAOpProfitff; cASales-cACOGS-cASGA-cAIE./cABookEquity] ; 
 end
-dMeanOpProfitff = mean(cell2mat(cAOpProfitff),'omitnan');
-dSDOpProfitff = std(cell2mat(cAOpProfitff),'omitnan');
-d1stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.01);
-d25stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.25);
-d50stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.50);
-d75stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.75);
-d99stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.99);
+[dMeancAOpProfitff,dSDcAOpProfitff,d1stQcAOpProfitff,d25stQcAOpProfitff,d50stQcAOpProfitff,d75stQcAOpProfitff,d99stQcAOpProfitff] = fConclude(cAOpProfitff)
 end
 
 

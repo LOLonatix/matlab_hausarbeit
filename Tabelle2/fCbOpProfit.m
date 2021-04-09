@@ -23,11 +23,5 @@ for i =1:10
    cACbOpProfit_CurrentCompany=cell2mat(cAOpProfit(i))+cACashBasedAdj./rCurrentCompany.TOTAL_ASSETS;
    
 end
-dMeanCbOpProfit = mean(cell2mat(cACbOpProfit),'omitnan');
-dSDCbOpProfit = std(cell2mat(cACbOpProfit),'omitnan');
-d1stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.01);
-d25stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.25);
-d50stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.50);
-d75stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.75);
-d99stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.99);
+[dMeanCbOpProfit,dSDCbOpProfit,d1stQCbOpProfit,d25stQCbOpProfit,d50stQCbOpProfit,d75stQCbOpProfit,d99stQCbOpProfit] = fConclude(cACbOpProfit);
 end

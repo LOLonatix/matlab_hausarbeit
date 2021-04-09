@@ -18,12 +18,6 @@ cAAccruals = {};
         cAAccruals=[cAAccruals,cAZaehler/cATotal_Assets]
         
     end
-dMeanAccruals = mean(cell2mat(cAAccruals),'omitnan');
-dSDAccruals = std(cell2mat(cAAccruals),'omitnan');
-d1stAccruals = quantile(cell2mat(cAAccruals),0.01);
-d25stQAccruals = quantile(cell2mat(cAAccruals),0.25);
-d50stQAccruals = quantile(cell2mat(cAAccruals),0.50);
-d75stQAccruals = quantile(cell2mat(cAAccruals),0.75);
-d99stQAccruals = quantile(cell2mat(cAAccruals),0.99);
+[dMeanAccruals,dSDAccruals,d1stQAccruals,d25stQAccruals,d50stQAccruals,d75stQAccruals,d99stQAccruals] = fConclude(cAAccruals);
 %end
 

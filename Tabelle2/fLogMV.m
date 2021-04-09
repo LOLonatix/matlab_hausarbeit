@@ -10,13 +10,7 @@ for i =1:5%numel(cFieldNames)
    cALogMV=[cALogMV; log(cAMarketValue)];%add together MV of previous firms with current firm's
    
 end
-dMeanLogMV = mean(cell2mat(cALogMV),'omitnan');
-dSDLogMV = std(cell2mat(cALogMV),'omitnan');
-d1stQLogMV = quantile(cell2mat(cALogMV),0.01);
-d25stQLogMV = quantile(cell2mat(cALogMV),0.25);
-d50stQLogMV = quantile(cell2mat(cALogMV),0.50);
-d75stQLogMV = quantile(cell2mat(cALogMV),0.75);
-d99stQLogMV = quantile(cell2mat(cALogMV),0.99);
+[dMeanLogMV,dSDLogMV,d1stQLogMV,d25stQLogMV,d50stQLogMV,d75stQLogMV,d99stQLogMV] = fConclude(cALogMV);
 
 %end
 

@@ -18,7 +18,7 @@ function fLoadRawData()
     % cell array holding keys, representating information about companies
     cListKeys = {};
     % hardcoded, since in Datastream '$ERROR' cell values occured
-    cTsKeys = {'NET_INCOME', 'COMMON_EQUITY','DEFFERED_TAXES','SALES','COGS','TOTAL_ASSETS','SG_A','RESEARCH_AND_DEVELOPMENT_COSTS','INTEREST_EXPENSES','ACCOUNTS_RECEIVABLE','INVENTORY','PREPAID_EXPENSES','DEFERRED_REVENUE','TRADE_ACCOUNTS_PAYABLE','ACCRUED_PAYROLL','OTHER_ACCRUED_EXPENSES','CURRENT_ASSETS','CASH_SHORT_TERM_INVESTMENTS','CURRENT_LIABILITIES','SHORT_TERM_DEBTS','INCOME_TAX_PAYABLE','DEPRECIATION','PREFERRED_STOCK','MINORITY_INTEREST','LONG_TERM_DEBT','MARKET_VALUE','UNADJUSTED_PRICE'};
+    cTsKeys = {'NET_INCOME', 'COMMON_EQUITY','DEFERRED_TAXES','SALES','COGS','TOTAL_ASSETS','SG_A','RESEARCH_AND_DEVELOPMENT_COSTS','INTEREST_EXPENSES','ACCOUNTS_RECEIVABLE','INVENTORY','PREPAID_EXPENSES','DEFERRED_REVENUE','TRADE_ACCOUNTS_PAYABLE','ACCRUED_PAYROLL','OTHER_ACCRUED_EXPENSES','CURRENT_ASSETS','CASH_SHORT_TERM_INVESTMENTS','CURRENT_LIABILITIES','SHORT_TERM_DEBTS','INCOME_TAX_PAYABLE','DEPRECIATION','PREFERRED_STOCK','MINORITY_INTEREST','LONG_TERM_DEBT','MARKET_VALUE','UNADJUSTED_PRICE'};
     lBoolListKeys = false;
 
     for i=1:dNumberCountries
@@ -33,31 +33,33 @@ function fLoadRawData()
         % !!!IMPORTANT!!! the order of companies are the same in the "_STATIC"
         % and "_TS" lists of the same part
         sPath2Country = append(sPath2RawData, '\', sCurrentCountry);
-        rFoldersInCountry = dir(sPath2Country);
-        rFoldersInCountry = extractfield(rFoldersInCountry, 'name');
-        if cell2mat(rFoldersInCountry(1)) == '.'
-            rFoldersInCountry = rFoldersInCountry(3:end);
-        end 
+        rFilesInCountry = dir(sPath2Country);
         
+        % now take only the true files, removing the github folders and
+        % tri-data folders
+        lFilesToLoad = ~[rFilesInCountry.isdir];
+        rFilesInCountry = extractfield(rFilesInCountry, 'name');
+        rFilesInCountry = rFilesInCountry(lFilesToLoad);
+ 
         % find amount parts by length/2 (STATIC and TS)
-        dAmountParts = length(rFoldersInCountry)/2;
+        dAmountParts = length(rFilesInCountry)/2;
 
         % iterate over different parts
         for x=1:dAmountParts
             % create string "PART_NAME"
             sCurrentPartString = append('PART', int2str(x));
             % find files only containing "PART_NAME"
-            lCurrentPartFiles = contains(rFoldersInCountry(1:end), sCurrentPartString);
+            lCurrentPartFiles = contains(rFilesInCountry(1:end), sCurrentPartString);
             % create bools for static/ts parts
-            lAllStaticParts = contains(rFoldersInCountry(1:end),'STATIC');
-            lAllTsParts = contains(rFoldersInCountry(1:end),'TS');
+            lAllStaticParts = contains(rFilesInCountry(1:end),'STATIC');
+            lAllTsParts = contains(rFilesInCountry(1:end),'TS');
 
             % start the loading process with the static files for each part,
             % which is a bool-matrix
             lCurrentStaticFile = lCurrentPartFiles & lAllStaticParts;
 
             % find loading path via previous bool-matrix
-            sLoadString = append(sPath2Country, '\', cell2mat(rFoldersInCountry(lCurrentStaticFile)));
+            sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentStaticFile)));
             [~,~,cTemp]=xlsread(sLoadString);
 
             dSizeCTemp = size(cTemp);
@@ -82,7 +84,7 @@ function fLoadRawData()
                 cCurrentRow = cTemp(row,:);
 
                 % use the 'COMPANY_NAME' as the struct.key
-                sCompanyString = cell_to_string(cCurrentRow(1));
+                sCompanyString = fCellToString(cCurrentRow(1));
                 rCountryStructure.(sCompanyString) = struct;
 
 
@@ -108,7 +110,7 @@ function fLoadRawData()
             % now load ts
             lCurrentTSFile = lCurrentPartFiles & lAllTsParts;
             % the loading process into cell-var cTemp
-            sLoadString = append(sPath2Country, '\', cell2mat(rFoldersInCountry(lCurrentTSFile)));
+            sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentTSFile)));
             sSheetNames = sheetnames(sLoadString);
 
             % generate a counter to save which trait is currently added
@@ -122,15 +124,17 @@ function fLoadRawData()
                 sStepSize = strfind(sSheetString, '_TS_');
                 dStep_size = str2double(sSheetString(sStepSize+4:end));
 
-                % load current sheet in var cTemp
-                [~,~,cTemp]=xlsread(sLoadString, current_sheet);
-                % delete first column, since it only holds constant dates
+                % load current sheet in var cTemp und cNumTemp
+                [cNumTemp,~,cTemp]=xlsread(sLoadString, current_sheet);
+                % delete first column, since it only holds constant dates             
                 cTemp(:,1) = [];
-
+                cNumTemp(:,1) = [];
+                
                 % get total amount colums in this sheet
                 vSizeCTemp = size(cTemp);
                 dColumnsCTemp = vSizeCTemp(2);
-
+             
+                
                 % counter used to count steps within step_size. reset for each
                 % sheet
                 dCounter = 1;
@@ -146,7 +150,9 @@ function fLoadRawData()
 
                     if lErrorBool ~= true
                         % load column as vector holding doubles
-                        vCurrentColumn = cell2mat(cTemp(2:end,column));
+                        %vCurrentColumn = cell2mat(cNumTemp(:,column));
+                        vCurrentColumn = cNumTemp(:,column);
+                        
                         % get current ts item key
                         sCurrentKey = cell2mat(cTsKeys(dKeyCounter+dCounter));
                         % get current company key
@@ -173,6 +179,9 @@ function fLoadRawData()
                 dKeyCounter = dKeyCounter + dStep_size;
             end
         end
+        
+        rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure);
+        
         % finally save the countrie's loaded data under 'folder_ImportedData'
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
@@ -182,9 +191,80 @@ function fLoadRawData()
    
 end
 
+function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
+    % create path to tri-folder
+    sPathToTriData = append(sPath2Country, '\', 'TRI_DATA');
+    % find all parts/data in this folder
+    rFilesInTriFolder = dir(sPathToTriData);
+        
+    % now take only the true files, removing the github folders 
+    lFilesToLoad = ~[rFilesInTriFolder.isdir];
+    rFilesInTriFolder = extractfield(rFilesInTriFolder, 'name');
+    rFilesInTriFolder = rFilesInTriFolder(lFilesToLoad);
 
+    dAmountParts = length(rFilesInTriFolder)/2;
+    
+    for i=1:dAmountParts
+        % load the static order of companies and their key
+        % create string "PART_NAME"
+        sCurrentPartString = append('PART', int2str(i));
+        
+        % find files only containing "PART_NAME"
+        lCurrentPartFiles = contains(rFilesInTriFolder, sCurrentPartString);
+        % create bools for static/ts parts
+        lAllStaticParts = contains(rFilesInTriFolder,'STATIC');
+        lAllTsParts = contains(rFilesInTriFolder,'TS');
 
-function working_string = cell_to_string(input_cell)
+        % start the loading process with the static files for each part,
+        % which is a bool-matrix
+        lCurrentStaticFile = lCurrentPartFiles & lAllStaticParts;
+        lCurrentTsFile =  lCurrentPartFiles & lAllTsParts;
+
+        % find loading path via previous bool-matrix
+        sLoadStringStatic = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentStaticFile)));
+        sLoadStringTs = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentTsFile)));
+        
+        % load ts and static data
+        [~,~,cTempStatic]=xlsread(sLoadStringStatic);
+        [cTempTs,~,~]=xlsread(sLoadStringTs);
+        
+        % calculate the amount of companies
+        dAmountCompaniesStatic = size(cTempStatic);
+        dAmountCompaniesStatic = dAmountCompaniesStatic(1);
+        
+        dAmountCompaniesTs = size(cTempTs);
+        dAmountCompaniesTs = dAmountCompaniesTs(2);
+        
+        % only if the amount of companies is the same save the TRI-Data,
+        % write error message otherwise
+        if dAmountCompaniesStatic == dAmountCompaniesTs
+            for p=2:dAmountCompaniesStatic
+                % use same function for creating struct.key string
+                sCompanyKey = fCellToString(cTempStatic(p,1));
+                % get vTriData
+                vTriData = cTempTs(:,p);
+                % save vTriData under tri key for sCompanyKey
+                if isfield(rCountryStructure, sCompanyKey) == true
+                    rCountryStructure.(sCompanyKey).TRI = vTriData;
+                % tri data was downloaded later on from datastream, so we 
+                % weren't sure whether the lists changed --> error message
+                else
+                    print = "Could not find company key"
+                    print = sCompanyKey
+                end
+            end
+        else
+            % error message
+            print = "ERROR! amount ts/static data for TRI not the same!"
+            print = "TS:"
+            print = dAmountCompaniesTs
+            print = "STATIC"
+            print = dAmountCompaniesStatic
+        end
+    end
+end
+
+function working_string = fCellToString(input_cell)
     working_string = cell2mat(input_cell);
     if isstring(working_string) ~= true
         working_string = string(working_string);
@@ -256,4 +336,9 @@ function string = fCreateKey(input_cell)
    
 end
 
+   
+  
+
+    
+   
 

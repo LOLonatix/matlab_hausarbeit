@@ -11,13 +11,13 @@ function [sName] = fOrthography(sName)
 % otherwise simply changing letters, except the first, in lower case.
 % hard-coding for countries with combined names to change their name to the
 % correct string
-if isequal(sName, 'GREATBRITAIN')
+if isequal(sName, 'GREAT_BRITAIN')
         sName = "Great Britain";
     elseif isequal(sName, 'HONGKONG')
         sName = "Hong Kong";
-    elseif isequal(sName, 'NEWZEALAND')
+    elseif isequal(sName, 'NEW_ZEALAND')
         sName = "New Zealand";
-    elseif isequal(sName, 'SOUTHAFRICA')
+    elseif isequal(sName, 'SOUTH_AFRICA')
         sName = "South Africa";
     else sName(2:end) = lower(sName(2:end));
 % turning sName character into string

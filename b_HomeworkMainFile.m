@@ -15,4 +15,4 @@ fFilterData();
 
 % Create table 1 using the script and reading the table variable from the
 % script output to write in an own table here in the final script.
-tTable1 = CreateTableOne(tTable1);
+CreateTableOne;

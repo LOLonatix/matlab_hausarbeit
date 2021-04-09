@@ -10,7 +10,8 @@ v75stQGrossProfits= [];
 v99stQGrossProfits= [];
 %hier startet for schleife
 %load data
-load('ARGENTINIA.mat')
+load('ARGENTINIA.mat');
+%call function to check 
 %replace NaNs with 0s
 cFieldNames = fieldnames(vCountryStructure);
 vCountryStructure(isnan(cFieldNames(1))=0; %cellfun(@isnan,cFieldNames,'UniformOutput',false)
@@ -41,7 +42,7 @@ v99stQGrossProfits= [v99stQGrossProfits,d99stQGrossProfits];
 
 %repeat with all countries
 %end of for schleife
-%calculate mean, sd and quantiles of the arrays
+%calculate mean of the arrays
 
 
 

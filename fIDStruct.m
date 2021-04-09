@@ -1,6 +1,6 @@
-function [rISINCurrency] = fISINCurrencyStruct()
-%% ISIN AND CURRENCY STRUCT
-% Function used to create a struct with the ISIN ID and currency abbreviation
+function [rIDStruct] = fIDStruct()
+%% GGISN AND CURRENCY STRUCT
+% Function used to create a struct with the GGISN ID and currency abbreviation
 % for each country to determine whether the country fulfills the
 % requirements of the filters as described by Hanauer et al. (2018).
 %% REQUIRES
@@ -15,7 +15,7 @@ function [rISINCurrency] = fISINCurrencyStruct()
 clear; clc;
 
 % create struct
-rISINCurrency = struct;
+rIDStruct = struct;
 
 % Country Names as the imported data
 vCountryNames = {'ARGENTINA', 'AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'BRAZIL', 'CANADA', 'CHILE',...
@@ -27,7 +27,7 @@ vCountryNames = {'ARGENTINA', 'AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'BRAZIL', 'CANA
     'THAILAND', 'TURKEY'};
 
 % Country ISIN ID
-vISIN = {'AR', 'AU', 'AT', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CZ', 'DK', 'EG', 'FI', 'FR', 'DE',...
+vGGISN = {'AR', 'AU', 'AT', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CZ', 'DK', 'EG', 'FI', 'FR', 'DE',...
     'GB', 'GR', 'HK', 'HU', 'IN', 'ID', 'IE', 'IL', 'IT', 'JP', 'JO', 'KR', 'MY', 'MA', 'NL',...
     'NZ', 'NO', 'PK', 'PE', 'PH', 'PL', 'PT', 'RU', 'SG', 'ZA', 'ES', 'SE', 'CH', 'TW', 'TH', 'TR'};
 
@@ -45,23 +45,22 @@ for i = 1:length(vCountryNames)
     
     % Creating an empty cell array at the countries currency to be able to
     % add several currencies if needed.
-    rISINCurrency.(sCountryName).ISIN = cell(1);
+    rIDStruct.(sCountryName).GGISN = cell(1);
     % Creating a struct item with the ISIN ID of a country.
-    rISINCurrency.(sCountryName).ISIN{1} = vISIN{i};
+    rIDStruct.(sCountryName).GGISN{1} = vGGISN{i};
     
     if isequal(sCountryName, 'HONGKONG')
-        rISINCurrency.(sCountryName).ISIN{2} = 'BM';
-        rISINCurrency.(sCountryName).ISIN{3} = 'KY';
+        rIDStruct.(sCountryName).GGISN{2} = 'BM';
+        rIDStruct.(sCountryName).GGISN{3} = 'KY';
     elseif isequal(sCountryName, 'CZECH')
-        rISINCurrency.(sCountryName).ISIN{2} = 'CS';
+        rIDStruct.(sCountryName).GGISN{2} = 'CS';
     end
-        
     
     % Creating an empty cell array at the countries currency to be able to
     % add several currencies if needed.
-    rISINCurrency.(sCountryName).CURRENCY = cell(1);
+    rIDStruct.(sCountryName).CURRENCY = cell(1);
     % Writing the countries currence in the cell array within the struct.
-    rISINCurrency.(sCountryName).CURRENCY{1} = vCurrency{i};
+    rIDStruct.(sCountryName).CURRENCY{1} = vCurrency{i};
     
     % Checking if current country uses the euro (€) and if so, add as
     % second currency. For Spain no other currency than 'E' could be found
@@ -70,39 +69,39 @@ for i = 1:length(vCountryNames)
     if isequal(sCountryName, 'AUSTRIA') || isequal(sCountryName, 'BELGIUM') || isequal(sCountryName, 'FINLAND') || isequal(sCountryName, 'FRANCE') ||...
             isequal(sCountryName, 'GERMANY') || isequal(sCountryName, 'GREECE') || isequal(sCountryName, 'IRELAND') || isequal(sCountryName, 'ITALY') ||...
             isequal(sCountryName, 'NETHERLANDS')
-        rISINCurrency.(sCountryName).CURRENCY{2} = 'E';
+        rIDStruct.(sCountryName).CURRENCY{2} = 'E';
     elseif isequal(sCountryName, 'RUSSIA')
         % For Russia also USD are accepted as currency.
-        rISINCurrency.(sCountryName).CURRENCY{2} = 'U$';
+        rIDStruct.(sCountryName).CURRENCY{2} = 'U$';
     end
     
     % Writing the GEOGRAPHIC_DESCR (GEOGN) and the GEOG_DESC_OF_LSTNG
     % (GEOLN) of country that is usually the same as the countries name.
     % The exceptions are adressed by the if-condition.
     if isequal(sCountryName,'CZECH')
-        rISINCurrency.(sCountryName).GEOGN = 'CZECH REPUBLIC';
-        rISINCurrency.(sCountryName).GEOLN = 'CZECH REPUBLIC';
+        rIDStruct.(sCountryName).GEOGN = 'CZECH REPUBLIC';
+        rIDStruct.(sCountryName).GEOLN = 'CZECH REPUBLIC';
     elseif isequal(sCountryName,'GREAT_BRITAIN')
-        rISINCurrency.(sCountryName).GEOGN = 'UNITED KINGDOM';
-        rISINCurrency.(sCountryName).GEOLN = 'UNITED KINGDOM';
+        rIDStruct.(sCountryName).GEOGN = 'UNITED KINGDOM';
+        rIDStruct.(sCountryName).GEOLN = 'UNITED KINGDOM';
     elseif isequal(sCountryName,'HONGKONG')
-        rISINCurrency.(sCountryName).GEOGN = 'HONG KONG';
-        rISINCurrency.(sCountryName).GEOLN = 'HONG KONG';
+        rIDStruct.(sCountryName).GEOGN = 'HONG KONG';
+        rIDStruct.(sCountryName).GEOLN = 'HONG KONG';
     elseif isequal(sCountryName,'KOREA')
-        rISINCurrency.(sCountryName).GEOGN = 'SOUTH KOREA';
-        rISINCurrency.(sCountryName).GEOLN = 'SOUTH KOREA';
+        rIDStruct.(sCountryName).GEOGN = 'SOUTH KOREA';
+        rIDStruct.(sCountryName).GEOLN = 'SOUTH KOREA';
     elseif isequal(sCountryName,'NEW_ZEALAND')
-        rISINCurrency.(sCountryName).GEOGN = 'NEW ZEALAND';
-        rISINCurrency.(sCountryName).GEOLN = 'NEW ZEALAND';
+        rIDStruct.(sCountryName).GEOGN = 'NEW ZEALAND';
+        rIDStruct.(sCountryName).GEOLN = 'NEW ZEALAND';
     elseif isequal(sCountryName,'RUSSIA')
-        rISINCurrency.(sCountryName).GEOGN = 'RUSSIAN FEDERATION';
-        rISINCurrency.(sCountryName).GEOLN = 'RUSSIAN FEDERATI';
+        rIDStruct.(sCountryName).GEOGN = 'RUSSIAN FEDERATION';
+        rIDStruct.(sCountryName).GEOLN = 'RUSSIAN FEDERATI';
     elseif isequal(sCountryName,'SOUTH_AFRICA')
-        rISINCurrency.(sCountryName).GEOGN = 'SOUTH AFRICA';
-        rISINCurrency.(sCountryName).GEOLN = 'SOUTH AFRICA';
+        rIDStruct.(sCountryName).GEOGN = 'SOUTH AFRICA';
+        rIDStruct.(sCountryName).GEOLN = 'SOUTH AFRICA';
     else
-        rISINCurrency.(sCountryName).GEOGN = sCountryName;
-        rISINCurrency.(sCountryName).GEOLN = sCountryName; 
+        rIDStruct.(sCountryName).GEOGN = sCountryName;
+        rIDStruct.(sCountryName).GEOLN = sCountryName; 
     end
 end
 end

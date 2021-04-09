@@ -12,7 +12,6 @@ function fLoadRawData()
         cCountryNames = cCountryNames(3:end);
     end 
    
-
     % get amount all folder/countrie_names
     dNumberCountries = length(cCountryNames);
 
@@ -62,8 +61,11 @@ function fLoadRawData()
             % find loading path via previous bool-matrix
             sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentStaticFile)));
             [~,~,cTemp]=xlsread(sLoadString);
-
+            
+            % remove empty rows (appear if [~,~,this_index] is used
+            cTemp(any(cellfun(@(x) any(isnan(x)),cTemp),2),:) = [];
             dSizeCTemp = size(cTemp);
+          
             % create list with "keys" from static request once
             if lBoolListKeys ~= true
                 for row=2:dSizeCTemp(2)
@@ -84,10 +86,15 @@ function fLoadRawData()
                 % only take one row at a time
                 cCurrentRow = cTemp(row,:);
 
-                % use the 'COMPANY_NAME' as the struct.key
-               
-                sCompanyString = fCellToString(cCurrentRow(1));
-       
+                % use the 'MNOMIC' as the struct.key, otherwise
+                % COMPANY_NAME
+             
+                if isnan(cCurrentRow{2}) == false 
+                    sCompanyString = fCellToString(cCurrentRow(2));
+                else
+                    sCompanyString = fCellToString(cCurrentRow(1));
+                end
+                
                 rCountryStructure.(sCompanyString) = struct;
           
                 % initialize as NaN to be able to skip empty lines in TS later
@@ -112,6 +119,7 @@ function fLoadRawData()
             % now load ts
             lCurrentTSFile = lCurrentPartFiles & lAllTsParts;
             % the loading process into cell-var cTemp
+            
             sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentTSFile)));
             sSheetNames = sheetnames(sLoadString);
 
@@ -245,13 +253,22 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
         
         dAmountCompaniesTs = size(cNumTS);
         dAmountCompaniesTs = dAmountCompaniesTs(2);
-        
+        counter = 0;
         % only if the amount of companies is the same save the TRI-Data,
         % write error message otherwise
         for p=2:dAmountCompaniesStatic
             % use same function for creating struct.key string
-            sCompanyKey = fCellToString(cTextTS(p,1));
-            
+           
+            test = cTextTS(p,2)
+            test2 = cTextTS(p,1)
+           
+            if ismember(cTextTS{p,2}, 'NA') == false
+                sCompanyKey = fCellToString(cTextTS(p,2));
+            else
+                sCompanyKey = fCellToString(cTextTS(p,1));
+            end
+            print = sCompanyKey
+  
             % check if last tri-data-sets were 'ERROR' message, otherwise
             % get tri-data
             if p <= dAmountCompaniesTs
@@ -261,13 +278,14 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
             end
             
             % save vTriData under tri key for sCompanyKey
-            if isfield(rCountryStructure, sCompanyKey) == true
+            if isfield(rCountryStructure, sCompanyKey) == true | isfield(rCountryStructure, sCompanyKey2
                 rCountryStructure.(sCompanyKey).TRI = vTriData;
             % tri data was downloaded later on from datastream, so we 
             % weren't sure whether the lists changed --> error message
             else
-                print = "Could not find company key"
-                print = sCompanyKey
+                %counter = counter +1
+                %print = "Could not find company key"
+                %print = sCompanyKey
             end
         end
     end
@@ -298,7 +316,6 @@ function working_string = fCellToString(input_cell)
     
     working_string = regexprep(working_string, ' +', '_');
     working_string = regexprep(working_string, '&+', '');
-    working_string = regexprep(working_string, '[.]','');
     working_string = regexprep(working_string, '[/]','');
     working_string = regexprep(working_string, '[£]','');
     working_string = regexprep(working_string, '[:]','');
@@ -306,7 +323,6 @@ function working_string = fCellToString(input_cell)
     working_string = regexprep(working_string, '[)]','');
     working_string = regexprep(working_string, '['']','');
     working_string = regexprep(working_string, '[-]','');
-    working_string = regexprep(working_string, '[0-9]', '');
     working_string = regexprep(working_string, '[@]', '');
     working_string = regexprep(working_string, '[+]', '');
     working_string = regexprep(working_string, '[$]', '');

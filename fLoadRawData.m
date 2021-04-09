@@ -86,9 +86,15 @@ function fLoadRawData()
                 % only take one row at a time
                 cCurrentRow = cTemp(row,:);
 
-                % use the 'COMPANY_NAME' as the struct.key
-                sCompanyString = fCellToString(cCurrentRow(1));
-       
+                % use the 'MNOMIC' as the struct.key, otherwise
+                % COMPANY_NAME
+             
+                if isnan(cCurrentRow{2}) == false 
+                    sCompanyString = fCellToString(cCurrentRow(2));
+                else
+                    sCompanyString = fCellToString(cCurrentRow(1));
+                end
+                
                 rCountryStructure.(sCompanyString) = struct;
           
                 % initialize as NaN to be able to skip empty lines in TS later
@@ -247,13 +253,21 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
         
         dAmountCompaniesTs = size(cNumTS);
         dAmountCompaniesTs = dAmountCompaniesTs(2);
-        
+        counter = 0;
         % only if the amount of companies is the same save the TRI-Data,
         % write error message otherwise
         for p=2:dAmountCompaniesStatic
             % use same function for creating struct.key string
-            sCompanyKey = fCellToString(cTextTS(p,1));
+           
+
+            sCompanyKey1 = fCellToString(cTextTS(p,1));
+            sCompanyKey2 = fCellToString(cTextTS(p,2));
+            if ismember(sCompanyKey2, 'NA') == true
+                sCompanyKey2 = NaN;
+            end
             
+           
+  
             % check if last tri-data-sets were 'ERROR' message, otherwise
             % get tri-data
             if p <= dAmountCompaniesTs
@@ -263,13 +277,18 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
             end
             
             % save vTriData under tri key for sCompanyKey
-            if isfield(rCountryStructure, sCompanyKey) == true
+            if isfield(rCountryStructure, sCompanyKey1) == true 
                 rCountryStructure.(sCompanyKey).TRI = vTriData;
+            elseif  class(sCompanyKey2) == 'double'
+                if isfield(rCountryStructure, sCompanyKey2) == true
+                    rCountryStructure.(sCompanyKey).TRI = vTriData;
+                end
             % tri data was downloaded later on from datastream, so we 
             % weren't sure whether the lists changed --> error message
             else
-                print = "Could not find company key"
-                print = sCompanyKey
+                %counter = counter +1
+                %print = "Could not find company key"
+                %print = sCompanyKey
             end
         end
     end

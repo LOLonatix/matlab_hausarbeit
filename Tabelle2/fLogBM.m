@@ -1,14 +1,14 @@
-function[dMeanLogBM,dSDLogBM,d1stQLogBM,d25stQLogBM,d50stQLogBM,d75stQLogBM,d99stQLogBM] = fLogBM(currentCountryStructure)
+function[vLogBM] = fLogBM(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
-cALogBM={};
+cLogBM={};
 for i =1:5%numel(cFieldNames)
    
-   cABookValue = currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY
-   cAMarketValue = currentCountryStructure.(cFieldNames{i}).MARKET_VALUE
+   cBookValue = currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY
+   cMarketValue = currentCountryStructure.(cFieldNames{i}).MARKET_VALUE
   
-   cALogBM=[cALogBM; log(cABookValue/cAMarketValue)];
+   cLogBM=[cLogBM; log(cBookValue/cMarketValue)];
    
 end
-[dMeanLogBM,dSDLogBM,d1stQLogBM,d25stQLogBM,d50stQLogBM,d75stQLogBM,d99stQLogBM] = fConclude(cALogBM);
+[vLogBM] = fConclude(cLogBM);
 end
 

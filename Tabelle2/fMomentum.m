@@ -1,4 +1,4 @@
-%function[dMeanMomentum,dSDMomentum,d1stQMomentum,d25stQMomentum,d50stQMomentum,d75stQMomentum,d99stQMomentum] = fMomentum(currentCountryStructure)
+%function[vMomentum] = fMomentum(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cAMomentum={};
 for i =1:numel(cFieldNames)
@@ -16,7 +16,7 @@ for i =1:numel(cFieldNames)
    cAMomentum = [cAMomentum; mMomentum];
      
 end
-[dMeanMomentum,dSDMomentum,d1stQMomentum,d25stQMomentum,d50stQMomentum,d75stQMomentum,d99stQMomentum] = fConclude(cAMomentum);
+[vMomentum] = fConclude(cAMomentum);
 
 %end
 

@@ -1,4 +1,4 @@
-%function[dMeanGrowthTA,dSDGrowthTA,d1stQGrowthTA,d25stQGrowthTA,d50stQGrowthTA,d75stQGrowthTA,d99stQGrowthTA] = fGrowthTA(currentCountryStructure)
+%function[vGrowthTA] = fGrowthTA(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cAGrowthTA={};
 for i =1:5%numel(cFieldNames)
@@ -16,7 +16,7 @@ for i =1:5%numel(cFieldNames)
    
 end
 
-[dMeanGrowthTA,dSDGrowthTA,d1stQGrowthTA,d25stQGrowthTA,d50stQGrowthTA,d75stQGrowthTA,d99stQGrowthTA] = fConclude(cAGrowthTA);
+[vGrowthTA] = fConclude(cAGrowthTA);
 
 %end
 

@@ -1,43 +1,51 @@
 clc;clear;
 
 %create arrays that are later being filled?
-vMeanGrossProfits = [];%leerer vektor
-vSDGrossProfits = [];
-v1stQGrossProfits = [];
-v25stQGrossProfits= [];
-v50stQGrossProfits= [];
-v75stQGrossProfits= [];
-v99stQGrossProfits= [];
+% vMeanGrossProfits = [];%leerer vektor
+% vSDGrossProfits = [];
+% v1stQGrossProfits = [];
+% v25stQGrossProfits= [];
+% v50stQGrossProfits= [];
+% v75stQGrossProfits= [];
+% v99stQGrossProfits= [];
 %hier startet for schleife
 %load data
-load('ARGENTINIA.mat');
+load('ARGENTINA.mat');
 %call function to check 
 %replace NaNs with 0s
-cFieldNames = fieldnames(vCountryStructure);
-vCountryStructure(isnan(cFieldNames(1))=0; %cellfun(@isnan,cFieldNames,'UniformOutput',false)
+cFieldNames = fieldnames(rCountryStructure);
+vItem = {'TRI'};
+for i = 1:numel(cFieldNames)
+    for j = 1:numel(vItem)
+        mTemp = rCountryStructure.(cFieldNames{i}).(vItem{j});
+        mTemp(isnan(mTemp))=0;        
+        rCountryStructure.(cFieldNames{i}).(vItem{j}) = mTemp;
+    end
+end
+
 %calculate gross profits
-[dMeanGrossProfits,dSDGrossProfits,d1stQGrossProfits,d25stQGrossProfits,d50stQGrossProfits,d75stQGrossProfits,d99stQGrossProfits,cAGrossProfit] = fGrossProfits(vCountryStructure);
+[vGrossProfit,cGrossProfit] = fGrossProfits(rCountryStructure);
 %calculate Operating profitability ball 2016
-[dMeanOpProfit,dSDOpProfit,d1stQOpProfit,d25stQOpProfit,d50stQOpProfit,d75stQOpProfit,d99stQOpProfit,cAOpProfit] = fOpProfit(vCountryStructure);
+[vOpProfitt,cOpProfit] = fOpProfit(rCountryStructure);
 %calculate operating profitability fama 
-[dMeanOpProfitff,dSDOpProfitff,d1stQOpProfitff,d25stQOpProfitff,d50stQOpProfitff,d75stQOpProfitff,d99stQOpProfitff] = fOpProfitff(vCountryStructure);
+[vOpProfitff] = fOpProfitff(rCountryStructure);
 %Calculate Cash based operating profitability
-[dMeanCbOpProfit,dSDCbOpProfit,d1stQCbOpProfit,d25stQCbOpProfit,d50stQCbOpProfit,d75stQCbOpProfit,d99stQCbOpProfit] = fCbOpProfit(vCountryStructure,cAOpProfit);
+[vCbOpProfit] = fCbOpProfit(rCountryStructure,cOpProfit);
 %Calculate Cash based gross profit
-[dMeanCbGrossProfit,dSDCbGrossProfit,d1stQCbGrossProfit,d25stQCbGrossProfit,d50stQCbGrossProfit,d75stQCbGrossProfit,d99stQCbGrossProfit] = fCbOpProfit(vCountryStructure,cAGrossProfit);
+[vCbGrossProfit] = fCbOpProfit(rCountryStructure,cGrossProfit);
 %calculate other stuff
 
 
 
 %Add all means, sd and quantiles into an array
 %gross profit arrays
-vMeanGrossProfits = [vMeanGrossProfits, dMeanGrossProfits];
-vSDGrossProfits = [vSDGrossProfits, dSDGrossProfits];
-v1stQGrossProfits = [v1stQGrossProfits,d1stQGrossProfits];
-v25stQGrossProfits= [v25stQGrossProfits,d25stQGrossProfits];
-v50stQGrossProfits= [v50stQGrossProfits,d50stQGrossProfits];
-v75stQGrossProfits= [v75stQGrossProfits,d75stQGrossProfits];
-v99stQGrossProfits= [v99stQGrossProfits,d99stQGrossProfits];
+% vMeanGrossProfits = [vMeanGrossProfits, dMeanGrossProfits];
+% vSDGrossProfits = [vSDGrossProfits, dSDGrossProfits];
+% v1stQGrossProfits = [v1stQGrossProfits,d1stQGrossProfits];
+% v25stQGrossProfits= [v25stQGrossProfits,d25stQGrossProfits];
+% v50stQGrossProfits= [v50stQGrossProfits,d50stQGrossProfits];
+% v75stQGrossProfits= [v75stQGrossProfits,d75stQGrossProfits];
+% v99stQGrossProfits= [v99stQGrossProfits,d99stQGrossProfits];
 %operating profitability arrays
 
 %repeat with all countries

@@ -1,6 +1,10 @@
 function fFilterData()
     clear; clc;
-
+    
+    % eu currencies
+    
+    rStringFiltersStatic = fCreateFilterStrings(vCountryNames); % Wo kommt die Variable her?
+    
     % Get a list of all files and folders in this folder.
     sPath2ImportedData = append(pwd, '\', 'folder_ImportedData\');
     rFolders = dir(sPath2ImportedData);
@@ -20,8 +24,7 @@ function fFilterData()
         sCurrentCountryName = cell2mat(cCountryNames(i));
         sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
         load(sPath2Country, 'rCountryStructure')
-      
-        
+     
         if lKeysLoaded ~= true
             load(sPath2Country, 'cListKeys');
             lKeysLoaded = true;
@@ -43,44 +46,39 @@ function fFilterData()
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
             
-            % this function calls the real filtering-function
-            bRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName);
-      
+            % this function calls the static filtering-function
+            lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);
+           
             % if the company has to be removed, add it to the cell-list
-            if bRemoveCompany == true
+            if lRemoveCompany == true
               cCompanyKeysToBeRemoved{end+1} = sCurrentCompanyKey;
-            end     
+            end      
         end
         
         % delete the companies via their key
         dAmountDeletableCompanies = length(cCompanyKeysToBeRemoved);
         for x=1:dAmountDeletableCompanies
             sCompanyKeyToRemove = cell2mat(cCompanyKeysToBeRemoved(x));
-            %rCountryStructure = remove(rCountryStructure, sCompanyKeyToRemove);   
+            rCountryStructure = rmfield(rCountryStructure, sCompanyKeyToRemove);   
+        end
+        
+        % after deleting the companies, calculate the return and call the
+        % dynamic filters (since indices were removed, calc. length again)
+        cAllCompanyKeys = fieldnames(rCountryStructure);
+        dAmountCompanies = length(cAllCompanyKeys);
+        
+        for p=1:dAmountCompanies
+            % get current key and the respective structure
+            sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
+            rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
+            % calculate the return
+            rCountryStructure.(sCurrentCompanyKey).RETURN = rCurrentCompany.TRI(2:end,:)./rCurrentCompany.TRI(1:end-1,:)-1;
+            % call the dynamic screen
+            rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCountryStructure.(sCurrentCompanyKey));
         end
         
         % save the filtered Data under "folder_FilteredData"
         sSavePath = append(pwd, '\folder_FilteredData\', sCurrentCountryName);
         save(sSavePath, 'rCountryStructure', 'cListKeys');
-    end
-end
-
-% the real filter process is written as an extra function for more clearity
-% in the code
-function bReturn = fStaticScreening(rCompany, sCountry)
-    
-    % check screening 1-3 --> major, equity and primary
-    if rCompany.MAJOR_FLAG ~= 'Y' | rCompany.STOCK_TYPE ~= 'EQ' | rCompany.QUOTE_INDICATOR ~= 'P'
-        bReturn = true;
-   
-    % check screening 4, 5--> country code needed (7 still missing, since
-    % needs another shortcut)
-    elseif contains(sCountry, rCompany.GEOGRAPHIC_DESCR) == false | contains(sCountry, rCompany.GEOG_DESC_OF_LSTNG) == false
-        bReturn = true;
-    % screening 6, 7 8 still missing, therefore the generic keyword
-    % deletion
-    
-    else
-        bReturn = false;
     end
 end

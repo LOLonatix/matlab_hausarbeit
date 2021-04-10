@@ -6,7 +6,7 @@ clear; clc;
 
 % Adding folder with functions for the table to the paths so that the
 % functions can be used.
-addpath(genpath('Tabelle1'));
+addpath(genpath('folder_Tabelle1'));
 
 %% Reading required files
 % Read the file containing the dates of the TS items to transform the start
@@ -68,16 +68,16 @@ for i=1:dNumberCountries
     % Determine the average monthly mean and median size of the firms of
     % the country using the function 'fMeanMedSize'.
     [dMeanSize,dMedianSize] = fMeanMedSize(mMVall);
+    
+    % Average total size of the firms of the country are calculated using
+    % the function 'faverageTotalSize'.
+    dAverageTotalSize = fAverageTotalSize(mMVall);
 
     % Counting the minimal and maximal active firms in a country and the
     % vector containing the active firms to determine the start and end
     % date of data availability using the function 'fMinMaxFirms'.
     [dMinFirms,dMaxFirms,vFirms] = fMinMaxFirms(mMVall);
-
-    % average total size of firms of the country calculated using the
-    % function 'faverageTotalSize'.
-    dAverageTotalSize = fAverageTotalSize(rCountryStructure);
-
+    
 %% Start and end date of data availability
     % Determine the start and end date of availability of data for the
     % country as first/last month with at least one active company using

@@ -1,7 +1,7 @@
-function [dMeanOpProfit,dSDOpProfit,d1stQOpProfit,d25stQOpProfit,d50stQOpProfit,d75stQOpProfit,d99stQOpProfit] = fOpProfit(currentCountryStructure)
+function [dMeanOpProfit,dSDOpProfit,d1stQOpProfit,d25stQOpProfit,d50stQOpProfit,d75stQOpProfit,d99stQOpProfit,cAOpProfit] = fOpProfit(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
+cAOpProfit={};
 for i =1:numel(cFieldNames)
-   cAOpProfit={};
    cASales = currentCountryStructure.(cFieldNames{i}).SALES;
    cACOGS = currentCountryStructure.(cFieldNames{i}).COGS;
    cARepSGA = currentCountryStructure.(cFieldNames{i}).SG_A-currentCountryStructure.(cFieldNames{i}).RESEARCH_AND_DEVELOPMENT_COSTS;

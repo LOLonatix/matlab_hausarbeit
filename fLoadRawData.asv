@@ -200,7 +200,7 @@ function fLoadRawData()
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
         sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
-        save(sSavePath, 'rCountryStructure', 'cListKeys', 'save_var_error','-v7.3');
+        save(sSavePath, 'rCountryStructure', 'cListKeys', 'save_var_error');
     end
    
 end
@@ -257,13 +257,10 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
                 value = cell2mat(cLastRow(c));
                 if isnan(value) == false
                     lOnlyFoundNaN = false;
-                    break;
                 end
             end
             if lOnlyFoundNaN == true
                 counter = counter +1;
-            else
-                break;
             end
         end
         while counter > 0
@@ -299,7 +296,7 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
             % check if last tri-data-sets were 'ERROR' message, otherwise
             % get tri-data
             if p <= dAmountCompaniesTs
-                vTriData = cTextTS(2:end,p);
+                vTriData = cNumTS(:,p);
             else
                 vTriData = NaN;
             end

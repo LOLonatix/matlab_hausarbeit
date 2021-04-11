@@ -1,0 +1,23 @@
+function lReturn = fCheckDataAvailability(rCompany)
+    % now filter if values are missing (caption of table 1)
+    % citation Ball 2016: sample consists of firms with non-missing market value of equity (COMMON EQUITY), 
+    % book-to-market (Book equity/market equity --> seen as Common Equity+Deferred Taxes/ MV) 
+    % gross profit (Sales-COGS/Total Assets), book value of total assets (Total Assets),
+    % current month returns and returns for the prior one-year (calc. via TRI)
+    
+    % since TRI data was loaded seperately, it could occur that no TRI data
+    % was received for a company --> remove
+
+    lReturn = false;
+    if isfield(rCompany, 'TRI') == true
+        if length(rCompany.MARKET_VALUE) == 1 || length(rCompany.UNADJUSTED_PRICE) == 1 || length(rCompany.SALES) == 1  
+            lReturn = true;
+        elseif length(rCompany.TOTAL_ASSETS) == 1 || length(rCompany.COMMON_EQUITY) == 1 
+            lReturn = true;
+        elseif length(rCompany.COGS) == 1 || length(rCompany.DEFERRED_TAXES) == 1 || length(rCompany.TRI) == 1
+           lReturn = true;
+        end
+    else
+        lReturn = true;
+    end 
+end

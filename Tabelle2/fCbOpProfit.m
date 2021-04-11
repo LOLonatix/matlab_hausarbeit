@@ -20,8 +20,9 @@ for i =1:10
    end
    
    
-   cCbOpProfit_CurrentCompany=cell2mat(cOpProfit(i))+vCashBasedAdj./rCurrentCompany.TOTAL_ASSETS;
+   vCbOpProfit_CurrentCompany=cell2mat(cOpProfit(i))+vCashBasedAdj./rCurrentCompany.TOTAL_ASSETS;
+   vCbOpProfit = [vCbOpProfit; vCbOpProfit_CurrentCompany];
    
 end
-[vCbOpProfit] = fConclude(cCbOpProfit);
+[vCbOpProfit] = fConclude(vCbOpProfit);
 end

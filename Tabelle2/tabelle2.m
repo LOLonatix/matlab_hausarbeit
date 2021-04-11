@@ -26,7 +26,7 @@ end
 %calculate gross profits
 [vGrossProfit,cGrossProfit] = fGrossProfits(rCountryStructure);
 %calculate Operating profitability ball 2016
-[vOpProfitt,cOpProfit] = fOpProfit(rCountryStructure);
+[vOpProfit,cOpProfit] = fOpProfit(rCountryStructure);
 %calculate operating profitability fama 
 [vOpProfitff] = fOpProfitff(rCountryStructure);
 %Calculate Cash based operating profitability

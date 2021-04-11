@@ -37,19 +37,6 @@ function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
     if ismember(sCurrency,cCurrency) == false
         lReturn = true;
     end
-    %if lReturn ~= true
-        %dLengthCurrency = length(rStringFiltersStatic.(sCountry).CURRENCY);
-        %lFoundCurrency = false;
-        %for i=1:dLengthCurrency
-        %    sString = rStringFiltersStatic.(sCountry).CURRENCY(i);
-        %    if contains(rCompany.CURRENCY, sString) == true
-        %        lFoundCurrency = true;
-        %    end
-        %end
-        %if lFoundCurrency ~= true
-        %    lReturn = true;  
-        %end
-    %end
     
     % screening 7 --> GGISN code
     cGGISN = rStringFiltersStatic.(sCountry).GGISN;
@@ -57,20 +44,6 @@ function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
     if ismember(sGGISN,cGGISN) == false
         lReturn = true;
     end
-    
-    %    if lReturn ~=true
-    %        dLengthGGISN = length(rStringFiltersStatic.(sCountry).GGISN);
-    %        lFoundGGISN = false;
-    %        for i=1:dLengthGGISN
-    %            sString = rStringFiltersStatic.(sCountry).GGISN(i);
-    %            if contains(rCompany.ISIN_ISSUER_CTRY, sString) == true
-    %                lFoundGGISN = true;
-    %            end
-    %        end
-    %        if lFoundGGISN ~= true
-    %            lReturn = true;
-    %        end
-    %    end
     
     % check screening 8 --> names with non-common stock affiliations
     if lReturn ~=true

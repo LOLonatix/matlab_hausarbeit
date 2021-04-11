@@ -1,4 +1,4 @@
-function fFilter25Companies(rCountryStructure)
+function rCountryStructure = fFilter25Companies(rCountryStructure)
     
     % get all companies
     cAllCompanies = fieldnames(rCountryStructure);

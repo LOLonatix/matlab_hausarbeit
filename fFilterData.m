@@ -14,10 +14,7 @@ function fFilterData()
     
     lKeysLoaded = false;
     
-    % eu currencies
-    
-    %save 'cCountryNames.mat'
-    rStringFiltersStatic = fCreateFilterStrings(cCountryNames); % Wo kommt die Variable her?
+    rStringFiltersStatic = fCreateFilterStrings(cCountryNames);
     
     % get amount all folder/countrie_names
     dNumberCountries = length(cCountryNames);
@@ -62,7 +59,7 @@ function fFilterData()
             sCompanyKeyToRemove = cell2mat(cCompanyKeysToBeRemoved(x));
             rCountryStructure = rmfield(rCountryStructure, sCompanyKeyToRemove);   
         end
-        
+       
         % after deleting the companies, calculate the return and call the
         % dynamic filters (since indices were removed, calc. length again)
         cAllCompanyKeys = fieldnames(rCountryStructure);
@@ -78,6 +75,9 @@ function fFilterData()
             rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCountryStructure.(sCurrentCompanyKey));
         end
         
+        % here comes the 25 companies filter
+        rCountryStructure = fFilter25Companies(rCountryStructure);
+       
         % save the filtered Data under "folder_FilteredData"
         sSavePath = append(pwd, '\folder_FilteredData\', sCurrentCountryName);
         save(sSavePath, 'rCountryStructure', 'cListKeys');

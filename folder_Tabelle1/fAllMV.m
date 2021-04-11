@@ -18,6 +18,10 @@ for i=1:dAmountCompanies
     % reading market values from the struct of the firm
     vMV = rCountryStructure.(cAllCompanyKeys{i}).MARKET_VALUE;
     % adding market values to the matrix
+    if length(vMV) == 312
     mMVall(:,i) = vMV(:);
+    else length(vMV) == 313
+    mMVall(:,i) = vMV(1:312);
+    end
 end
 end

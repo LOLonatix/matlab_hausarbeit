@@ -1,15 +1,17 @@
-function rStringFiltersStatic = fCreateFilterStrings(vCountryNames)
+function rStringFiltersStatic = fCreateFilterStrings(cCountryNames)
     rStringFiltersStatic = struct;
     rID = fIDStruct();
 
-    dAmountCountries = length(vCountryNames);
+    %load 'cCountryNames.mat'
+    
+    dAmountCountries = length(cCountryNames);
     for i=1:dAmountCountries
-        sCountryName = vCountryNames(i);
-        rStringFiltersStatic.sCountryName.GGISN = rID.sCountryName.GGISN;
-        rStringFiltersStatic.sCountryName.CURRENCY = rID.sCountryName.CURRENCY;
-        rStringFiltersStatic.sCountryName.GEOGN = rID.sCountryName.GEOGN;
-        rStringFiltersStatic.sCountryName.GEOLN = rID.sCountryName.GEOLN;
-        rStringFiltersStatic.sCountryName.COUNTRY_SPECIFIC_FILTER = NaN;
+        sCountryName = (regexprep(cCountryNames{i},'.mat',''));
+        rStringFiltersStatic.(sCountryName).GGISN = rID.(sCountryName).GGISN;
+        rStringFiltersStatic.(sCountryName).CURRENCY = rID.(sCountryName).CURRENCY;
+        rStringFiltersStatic.(sCountryName).GEOGN = rID.(sCountryName).GEOGN;
+        rStringFiltersStatic.(sCountryName).GEOLN = rID.(sCountryName).GEOLN;
+        rStringFiltersStatic.(sCountryName).COUNTRY_SPECIFIC_FILTER = NaN;
     end
     % BLOCK MAY BE USELESS DUE TO rID
     % add further values with more then one currency/GGISN 

@@ -1,10 +1,6 @@
 function fFilterData()
     clear; clc;
     
-    % eu currencies
-    
-    rStringFiltersStatic = fCreateFilterStrings(vCountryNames); % Wo kommt die Variable her?
-    
     % Get a list of all files and folders in this folder.
     sPath2ImportedData = append(pwd, '\', 'folder_ImportedData\');
     rFolders = dir(sPath2ImportedData);
@@ -14,10 +10,15 @@ function fFilterData()
     cCountryNames = extractfield(rFolders, 'name');
     if cell2mat(cCountryNames(1)) == '.'
         cCountryNames = cCountryNames(3:end);
-    end 
+    end
     
     lKeysLoaded = false;
-
+    
+    % eu currencies
+    
+    %save 'cCountryNames.mat'
+    rStringFiltersStatic = fCreateFilterStrings(cCountryNames); % Wo kommt die Variable her?
+    
     % get amount all folder/countrie_names
     dNumberCountries = length(cCountryNames);
     for i=1:dNumberCountries

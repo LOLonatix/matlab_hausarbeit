@@ -6,8 +6,8 @@ function rReturnCompany = fDynamicScreening(rCompany)
     
     % iterate backwards to use dynamic filter 1
     dLength = length(vMV)-1;
-    dCounter = 1;
-    for i=1:dLength
+    dCounter = 0;
+    for i=0:dLength
         % filter 1
         if vReturns(end-i) == 0 && dCounter == i
             dCounter = dCounter + 1;

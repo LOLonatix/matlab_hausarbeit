@@ -1,18 +1,20 @@
-function rCountryStructure = fFilter25Companies(rCountryStructure)
+function returnCountryStructure = fFilter25Companies(rCountryStructure)
     
     % get all companies
     cAllCompanies = fieldnames(rCountryStructure);
     cCompaniesToRemove = {};
-    
+    counter = 0;
     vActiveCompanies = zeros(312,1);
-    
     for i=1: length(cAllCompanies)
         vMarketValue = rCountryStructure.(cell2mat(cAllCompanies(i))).MARKET_VALUE;
         % should not be necessary because of the previous filters, but
         % better be safe then sorry
         if length(vMarketValue) > 1
             lActiveCompany = ~isnan(vMarketValue);
-            vActiveCompanies = vActiveCompanies + lActiveCompany;
+            if lActiveCompany(end) == 1
+                counter = counter +1;
+            end
+            vActiveCompanies = vActiveCompanies+lActiveCompany;
         end
     end
     % create logical matrix for more then 25 companies active at given time
@@ -66,4 +68,5 @@ function rCountryStructure = fFilter25Companies(rCountryStructure)
             rCountryStructure = rmfield(rCountryStructure, cell2mat(cAllCompanies(i)));
         end
     end
+    returnCountryStructure = rCountryStructure;
 end

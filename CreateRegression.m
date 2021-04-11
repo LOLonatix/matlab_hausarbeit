@@ -44,6 +44,19 @@ for i=1:dNumberCountries
     [ALogMV] = fLogMV(rCountryStructure);
 end
 
-%% Create Table of stacked data set
+%% Create stacked data set
+
+vY = AOpProfitff; %create vector of dependet variable
+
+mX = [AOpProfit, ALogMV]; %create matrix of explanatory variables
+
+%% Estimate regression equation
+
+regstats(vY,mX); %choose beta and r (coefficients and residuals) as variables in workspace 
+
+
+                 
+
+
 
 

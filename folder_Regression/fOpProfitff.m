@@ -8,7 +8,9 @@ for i =1:numel(cFieldNames)
    cASGA = currentCountryStructure.(cFieldNames{i}).SG_A;
    cAIE=currentCountryStructure.(cFieldNames{i}).INTEREST_EXPENSES;
    cABookEquity= currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
-   %hier weiter
-   AOpProfitff=[AOpProfitff; cASales-cACOGS-cASGA-cAIE./cABookEquity] ; 
+   
+   AOpProfitff=[AOpProfitff; cASales-cACOGS-cASGA-cAIE./cABookEquity]; 
+   
 end
+
 end

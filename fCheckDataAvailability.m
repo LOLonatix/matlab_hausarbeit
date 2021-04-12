@@ -10,7 +10,7 @@ function lReturn = fCheckDataAvailability(rCompany)
 
     lReturn = false;
     if isfield(rCompany, 'TRI') == true
-        if length(rCompany.MARKET_VALUE) == 1 || length(rCompany.UNADJUSTED_PRICE) == 1 || length(rCompany.SALES) == 1  
+        if length(rCompany.MARKET_VALUE) == 1 || length(rCompany.UNADJUSTED_PRICE) == 1 || length(rCompany.SALES) == 1 %|| length(rCompany.ACCOUNTS_RECEIVABLE) == 1 || length(rCompany.INVENTORY) == 1 || length(rCompany.PREPAID_EXPENSES) == 1|| length(rCompany.DEFERRED_REVENUE) == 1|| length(rCompany.TRADE_ACCOUNTS_PAYABLE) == 1 || length(rCompany.ACCRUED_PAYROLL) == 1 || length(rCompany.OTHER_ACCRUED_EXPENSES) == 1
             lReturn = true;
         elseif length(rCompany.TOTAL_ASSETS) == 1 || length(rCompany.COMMON_EQUITY) == 1 
             lReturn = true;

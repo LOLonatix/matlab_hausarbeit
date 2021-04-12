@@ -8,13 +8,13 @@ function [dAverageTotalSize] = fAverageTotalSize(mMVall)
 %% RETURNS
 % double with the average total size of the country
 %% FUNCTION
-% turning NANs of mMVall into zeros
-mMVall(isnan(mMVall))=0;
 % adding the market value of each firm to the countries total market value
 % per month
-vTotalMV = sum(mMVall,2);
+vTotalMV = sum(mMVall,2, 'omitnan');
+% turning zeros of vTotalMV into NaNs
+vTotalMV(vTotalMV==0) = NaN;
 % calculating the mean of the total market values and rounding to a full
 % number
-dAverageTotalSize = round(mean(vTotalMV));
+dAverageTotalSize = round(mean(vTotalMV,'omitnan'));
 end
 

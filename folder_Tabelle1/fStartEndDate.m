@@ -17,7 +17,7 @@ vActive=find(vFirms);
 % defining the the position of the first active firm as start date
 dStartDate=vActive(1);
 % extracting start date from the date table at the position of the start date
-dtStart=tDates{dStartDate,(1)};
+dtStart=tDates{dStartDate,1};
 % converting the start date into a string with the correct format
 sStartDate=datestr(dtStart,sDateFormat);
 %measuring the length of the "active firms vector" to be able to adress the

@@ -31,15 +31,14 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
             vCurrentField = rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p)));
             % if it is not nan
             if length(vCurrentField) > 1
-                
                 % if field is not tri or return
                 if p < dLength-2
                     % use lActive on the item-vector
                     vCurrentField(~lActiveCompanies) = NaN;
-                    
+               
                     % it it only contains NaNs afterwards, delete it (set to NaN), otherwise
                     % append it normally
-                    if sum(isnan(vCurrentField)) > 1
+                    if sum(~isnan(vCurrentField)) > 1
                         rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = vCurrentField;
                     else
                         rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = NaN;
@@ -51,7 +50,7 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
                     lActiveCompaniesAppended(end+1:end+12) = zeros(12,1);
                     % do the same thing as previously
                     vCurrentField(~lActiveCompaniesAppended) = NaN;
-                    if sum(isnan(vCurrentField)) > 1
+                    if sum(~isnan(vCurrentField)) > 1
                         rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = vCurrentField;
                     else
                         rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = NaN;

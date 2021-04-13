@@ -1,6 +1,6 @@
 function fLoadRawData()
     clear; clc; 
-    save_var_error = string;
+
     % Get a list of all files and folders in this folder.
     sPath2RawData = append(pwd, '\', 'folder_RawData');
     rFolders = dir(sPath2RawData);
@@ -23,9 +23,9 @@ function fLoadRawData()
 
     for i=1:dNumberCountries
         % first, get the country i and create a structure for it
-        sCurrentCountry = cell2mat(cCountryNames(i));
+        sCurrentCountry = cell2mat(cCountryNames(i));        
         rCountryStructure = struct;
-
+        
         % now open the country folder, which is organized as in the following:
         % some lists were to large --> splitted in different "PART"s
         % each list has their own "_STATIC" and "_TS" list
@@ -46,6 +46,9 @@ function fLoadRawData()
 
         % iterate over different parts
         for x=1:dAmountParts
+            % create a sub struct for each part
+            rCountryPartStructure = struct;
+            
             % create string "PART_NAME"
             sCurrentPartString = append('PART', int2str(x));
             % find files only containing "PART_NAME"
@@ -85,6 +88,7 @@ function fLoadRawData()
                 % start with using mnemonic for the key
                 cCurrentRow = cTemp(row,:);
                 sFieldToUse = cell2mat(cCurrentRow(2));
+                
                 % otherwise use the datastream-code
                 if isnan(sFieldToUse) == true | matches(sFieldToUse, 'NA') == true | matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true
                     sFieldToUse = cell2mat(cCurrentRow(1));
@@ -94,18 +98,18 @@ function fLoadRawData()
                 sCompanyString = fStringToStructKey(sFieldToUse);
               
                 % create struct.key
-                rCountryStructure.(sCompanyString) = struct;
+                 rCountryPartStructure.(sCompanyString) = struct;
           
                 % initialize as NaN to be able to skip empty lines in TS later
                 % on (created by datastream "$ERROR, value not found" 
                 for currentKey=1:dLenghtKeys
-                   rCountryStructure.(sCompanyString).(cell2mat(cListKeys(currentKey))) = NaN(1);
+                    rCountryPartStructure.(sCompanyString).(cell2mat(cListKeys(currentKey))) = NaN(1);
                 end
                 % load static data into strukt.key
                 for column=2:dSizeCTemp(2)
                     cCurrentValue = cTemp(row, column);
                     sKeyString2Use = cell2mat(cListKeys(column-1));
-                    rCountryStructure.(sCompanyString).(sKeyString2Use)=cell2mat(cCurrentValue);          
+                     rCountryPartStructure.(sCompanyString).(sKeyString2Use)=cell2mat(cCurrentValue);          
                 end 
             end
 
@@ -113,8 +117,9 @@ function fLoadRawData()
             % part for ts --> another viable way would be to use
             % "struct_arrays" to use indexing, the latter was discovered close
             % before the deadline
-            cAllCompanyKeys = fieldnames(rCountryStructure);
-            dAmountCompanies = size(cAllCompanyKeys);
+            cAllCompanyKeys = fieldnames(rCountryPartStructure);
+            dAmountCompanies = length(cAllCompanyKeys)
+           
 
             % now load ts
             lCurrentTSFile = lCurrentPartFiles & lAllTsParts;
@@ -128,6 +133,7 @@ function fLoadRawData()
 
             % now iterate over each sheet
             for current_sheet=1:length(sSheetNames)
+            
                 sSheetString = char(sSheetNames(current_sheet));
                 % get stepsize (amount of data for each company in succession)
                 % hidden in sheetname as "..._TS_stepsize"
@@ -137,17 +143,12 @@ function fLoadRawData()
                 % load current sheet in var cTemp und cNumTemp
                 [~,~,cTemp]=xlsread(sLoadString, current_sheet);
                 % delete first column, since it only holds constant dates  
-                
-                if length(cTemp) < 25
-                    save_var_error = append(save_var_error, '___', sLoadString, '-', int2str(current_sheet));
-                else
-                    % delete first colum --> dates
-                    cTemp(:,1) = [];
-                  
-                    % get total amount colums in this sheet
-                    dColumnsCTemp = dAmountCompanies*dStepSize;
-                    
-                
+
+                cTemp(:,1) = [];
+
+                % get total amount colums in this sheet
+                dCompaniesInSheet = dAmountCompanies*dStepSize;
+             
                 % counter used to count steps within step_size. reset for each
                 % sheet
                 dCounter = 1;
@@ -155,9 +156,10 @@ function fLoadRawData()
                 dIndexCurrentCompany = 1;
 
                 % iterate over colums in current sheet
-                for column=1:dColumnsCTemp
-
+                for column=1:dCompaniesInSheet
+                   % print = col_ctemp
                     % check first value, to skip  '#ERROR' and save time
+                 
                     sFirstValue = cell2mat(cTemp(1,column));
                     lErrorBool = contains(sFirstValue, '#ERROR');
 
@@ -165,45 +167,55 @@ function fLoadRawData()
                         % load column as vector holding doubles
                         %vCurrentColumn = cell2mat(cNumTemp(:,column));
                         vCurrentColumn = cTemp(2:313,column);
-                        
+
                         % get current ts item key
                         sCurrentKey = cell2mat(cTsKeys(dKeyCounter+dCounter));
                         % get current company key
                         sCurrentCompanyKey = cell2mat(cAllCompanyKeys(dIndexCurrentCompany));
                         % save in sub struct
-                        rCountryStructure.(sCurrentCompanyKey).(sCurrentKey)=vCurrentColumn;
+                         rCountryPartStructure.(sCurrentCompanyKey).(sCurrentKey)=vCurrentColumn;
                     end
 
                     % if following if is true, then data for the next company
                     % is loaded and dCounter is resetted
+
                     if dCounter == dStepSize 
                         dCounter = 1;
                         % I do not know why I have to use this if here,
                         % otherwise out of bounds exception
                         if dIndexCurrentCompany < length(cAllCompanyKeys)
                             dIndexCurrentCompany = dIndexCurrentCompany + 1;
-                        end     
-                    % otherwise dCounter += 1
+                        end
+
+                        % otherwise dCounter += 1
                     else
                         dCounter = dCounter + 1;
                     end   
                 end
-                % after finishing one sheet, use the next ts-item-keys 
-                dKeyCounter = dKeyCounter + dStepSize;
-                end
+                
+            % after finishing one sheet, use the next ts-item-keys 
+            dKeyCounter = dKeyCounter + dStepSize;
             end
         end
-        
-        rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure);
-        
-        % finally save the countrie's loaded data under 'folder_ImportedData'
-        % as a .mat file containing the respective struct
-        % --> Excel Import is a bottleneck regarding the runtime
-        sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
-        save(sSavePath, 'rCountryStructure', 'cListKeys', 'save_var_error','-v7.3');
+            
+        % finally append  rCountryPartStructure to rCountryStructure        
+        cAllCompanies = fieldnames(rCountryPartStructure); 
+        for t=1:length(cAllCompanies)
+            sCompanyName = cell2mat(cAllCompanies(t));
+            rCompany =  rCountryPartStructure.(sCompanyName);
+            rCountryStructure.(sCompanyName) = rCompany;
+        end
     end
-   
+
+    rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure);
+
+    % finally save the countrie's loaded data under 'folder_ImportedData'
+    % as a .mat file containing the respective struct
+    % --> Excel Import is a bottleneck regarding the runtime
+    sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
+    save(sSavePath, 'rCountryStructure', 'cListKeys', 'save_var_error','-v7.3');
 end
+   
 
 function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
     % create path to tri-folder

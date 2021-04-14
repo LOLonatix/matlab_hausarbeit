@@ -17,7 +17,7 @@ clear; clc;
 % create struct
 rIDStruct = struct;
 
-% Country Names as the imported data
+% Country Names as in the imported data
 vCountryNames = {'ARGENTINA', 'AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'BRAZIL', 'CANADA', 'CHILE',...
     'CHINA', 'COLOMBIA', 'CZECH', 'DENMARK', 'EGYPT', 'FINLAND', 'FRANCE', 'GERMANY',...
     'GREAT_BRITAIN', 'GREECE', 'HONGKONG', 'HUNGARY', 'INDIA', 'INDONESIA', 'IRELAND',...
@@ -32,9 +32,9 @@ vGGISN = {'AR', 'AU', 'AT', 'BE', 'BR', 'CA', 'CL', 'CN', 'CO', 'CZ', 'DK', 'EG'
     'NZ', 'NO', 'PK', 'PE', 'PH', 'PL', 'PT', 'RU', 'SG', 'ZA', 'ES', 'SE', 'CH', 'TW', 'TH', 'TR'};
 
 % Currency short
-vCurrency = {'AP', 'A$', 'AS', 'BF' , 'C', 'C$', 'CE', '+++CHINA+++' , 'CP', 'CK', 'DK', 'E£', 'M', 'FF', 'DM',...
+vCurrency = {'AP', 'A$', 'AS', 'BF' , 'C', 'C$', 'CE', 'CH' , 'CP', 'CK', 'DK', 'E£', 'M', 'FF', 'DM',...
     '£', 'DR', 'K$', 'HF', 'IR', 'RI', '£E', 'I£', 'L', 'Y', 'JD', 'KW', 'M$', 'MD', 'FL',...
-    'Z$', 'NK', 'PR', 'PS', 'PP', 'PZ', '+++PORTUGAL+++', 'UR', 'S$', 'R', 'E', 'SK', 'SF', 'TW', 'TB', 'TL'};
+    'Z$', 'NK', 'PR', 'PS', 'PP', 'PZ', 'PE', 'UR', 'S$', 'R', 'EP', 'SK', 'SF', 'TW', 'TB', 'TL'};
 
 %% FUNCTION Build and fill struct
 % Length of the loop is known due to hardcoding of the countries in the
@@ -68,7 +68,7 @@ for i = 1:length(vCountryNames)
     % therefore no second currency is added.
     if isequal(sCountryName, 'AUSTRIA') || isequal(sCountryName, 'BELGIUM') || isequal(sCountryName, 'FINLAND') || isequal(sCountryName, 'FRANCE') ||...
             isequal(sCountryName, 'GERMANY') || isequal(sCountryName, 'GREECE') || isequal(sCountryName, 'IRELAND') || isequal(sCountryName, 'ITALY') ||...
-            isequal(sCountryName, 'NETHERLANDS')
+            isequal(sCountryName, 'NETHERLANDS') || isequal(sCountryName, 'PORTUGAL') || isequal(sCountryName, 'SPAIN')
         rIDStruct.(sCountryName).CURRENCY{2} = 'E';
     elseif isequal(sCountryName, 'RUSSIA')
         % For Russia also USD are accepted as currency.

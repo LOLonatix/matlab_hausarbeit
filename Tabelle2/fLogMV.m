@@ -1,7 +1,7 @@
 function[vQLogMV] = fLogMV(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cLogMV={};
-for i =1:5%numel(cFieldNames)
+for i =1:numel(cFieldNames)
    
    cMarketValue = currentCountryStructure.(cFieldNames{i}).MARKET_VALUE;
    %cAMarketValue(1,:) = [];%delete first cell to create a 1month lagged MV

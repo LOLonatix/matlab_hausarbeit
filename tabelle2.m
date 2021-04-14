@@ -19,7 +19,7 @@ rFolders = dir(sPath2ImportedData)
 % were created by github "." and "..".
 cCountryNames = extractfield(rFolders, 'name');
 if cell2mat(cCountryNames(1)) == '.'
-cCountryNames = cCountryNames(3:end);
+    cCountryNames = cCountryNames(3:end);
 end 
 
 % Get amount all folder/countrie_names.
@@ -63,15 +63,15 @@ end
 %Calculate Cash based operating profitability
 [vCbOpProfit] = fCbOpProfit(rCountryStructure,cOpProfit);
 %Calculate Cash based gross profit
-%[vCbGrossProfit] = fCbOpProfit(rCountryStructure,cGrossProfit);
+[vCbGrossProfit] = fCbOpProfit(rCountryStructure,cGrossProfit);
 %calculate other stuff
 
 
 
 %Add all means, sd and quantiles into one array for all countries
 %gross profit arrays
-mGrossProfit_AllCountries=[mGrossProfit_AllCountries(:),vGrossProfit(:)];
-
+%mGrossProfit_AllCountries=[mGrossProfit_AllCountries(:),vGrossProfit(:)]
+mGrossProfit_AllCountries=horzcat(mGrossProfit_AllCountries,vGrossProfit)
 %operating profitability arrays 
 mOpProfit_AllCountries=[mOpProfit_AllCountries(:),vOpProfit(:)];
 %Operating profit ff

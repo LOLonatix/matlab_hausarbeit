@@ -12,16 +12,17 @@ function [sName] = fOrthography(sName)
 % hard-coding for countries with combined names to change their name to the
 % correct string
 if isequal(sName, 'GREAT_BRITAIN')
-        sName = "Great Britain";
-    elseif isequal(sName, 'HONGKONG')
-        sName = "Hong Kong";
-    elseif isequal(sName, 'NEW_ZEALAND')
-        sName = "New Zealand";
-    elseif isequal(sName, 'SOUTH_AFRICA')
-        sName = "South Africa";
-    else sName(2:end) = lower(sName(2:end));
-% turning sName character into string
-        sName = string(sName);
-    end
+    sName = "Great Britain";
+elseif isequal(sName, 'HONGKONG')
+    sName = "Hong Kong";
+elseif isequal(sName, 'NEW_ZEALAND')
+    sName = "New Zealand";
+elseif isequal(sName, 'SOUTH_AFRICA')
+    sName = "South Africa";
+else
+    sName(2:end) = lower(sName(2:end));
+    % turning sName character into string
+    sName = string(sName);
+end
 end
 

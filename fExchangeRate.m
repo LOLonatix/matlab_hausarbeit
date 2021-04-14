@@ -39,7 +39,7 @@ cCountryNames = {'ARGENTINA', 'AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'BRAZIL', 'CANA
     'NEW_ZEALAND', 'NORWAY', 'PAKISTAN', 'PERU', 'PHILIPPINES', 'POLAND', 'PORTUGAL',...
     'RUSSIA', 'SINGAPORE', 'SOUTH_AFRICA', 'SPAIN', 'SWEDEN', 'SWITZERLAND', 'TAIWAN',...
     'THAILAND', 'TURKEY'};
-dAmountCountries = length(cCountryNames)
+dAmountCountries = length(cCountryNames);
 
 % Iterate through countries to add respective exchange rate to struct
 for i = 1:dAmountCountries
@@ -49,7 +49,7 @@ for i = 1:dAmountCountries
     % list found), the structs for the countries is NaN and the reference
     % column in the table for following countries is adapted
     if isequal(sCountryName,'FINLAND') || isequal(sCountryName,'PORTUGAL')
-        rExchangeRate.(sCountryName) = NaN;
+        rExchangeRate.(sCountryName) = [];
     elseif i <= 14
         rExchangeRate.(sCountryName) = tExchangeRates.(i+2);
     % After Finland
@@ -71,12 +71,18 @@ rExchangeTRI = fExchangeTRI(cCountryNames);
 for i = 1:dAmountCountries
     sCountryName = cCountryNames{i};
     % Find missing exchange rates
-    lExchangeNaN = isnan(rExchangeRate.(sCountryName))
+    lExchangeNaN = isnan(rExchangeRate.(sCountryName));
     % Find country currencies
     cCurrencies = fieldnames(rExchangeTRI.(sCountryName));
     % Replace NaNs in rExchangeRate with values from rExchangeTRI, but only
     % for the first currency (Euro is known not to have NaNs)
-    rExchangeRate.(sCountryName)(lExchangeNaN) = rExchangeTRI.(sCountryName).(cCurrencies{1})(lExchangeNaN); 
+    rExchangeRate.(sCountryName)(lExchangeNaN) = rExchangeTRI.(sCountryName).(cCurrencies{1})(lExchangeNaN);
+    % Exceptions for Finland and Portugal as they have only calculated
+    % exchange rates - the whole array with the data of the former currency
+    % is added to the struct
+    if sum(contains(['FINLAND', 'PORTUGAL'],sCountryName)) == 1
+        rExchangeRate.(sCountryName) = rExchangeTRI.(sCountryName).(cCurrencies{1});
+    end
 end
 % Save data for process speed up
 save('rExchangeRate.mat','rExchangeRate')

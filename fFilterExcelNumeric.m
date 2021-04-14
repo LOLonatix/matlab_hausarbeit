@@ -22,11 +22,11 @@ for i = 2:dLengthNonnumeric
     % Iterate through each item of the temporary data
     for j = 1:dLengthTemp
         % If item is NaN (NA) write NaN
-        if  string(cTemp{j}) == "NA";
+        if  string(cTemp{j}) == "NA"
             cTemp{j} = NaN;
         % Else turn the string with the number into a double
         else
-            cTemp{j} = str2num(string(cTemp{j}));
+            cTemp{j} = str2double(string(cTemp{j}));
         end
     end
     % Turn cell array into table

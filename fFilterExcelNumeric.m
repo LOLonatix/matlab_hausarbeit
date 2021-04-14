@@ -9,7 +9,7 @@ function tExchange = fFilterExcelNumeric(tExchange)
 %% FUNCTION
 % Find non-numeric columns in table with Datastream data and calculate
 % amount of non-numeric columns
-lNumerics = varfun(@isnumeric,tExchangeRates,'output','uniform');
+lNumerics = varfun(@isnumeric,tExchange,'output','uniform');
 vNonnumerics = find(lNumerics < 1);
 dLengthNonnumeric = length(vNonnumerics);
 
@@ -17,7 +17,7 @@ dLengthNonnumeric = length(vNonnumerics);
 for i = 2:dLengthNonnumeric
     % Creating a temporary cell array with the data of the current
     % non-numeric column
-    cTemp = tExchangeRates.(vNonnumerics(i));
+    cTemp = tExchange.(vNonnumerics(i));
     dLengthTemp = length(cTemp);
     % Iterate through each item of the temporary data
     for j = 1:dLengthTemp
@@ -32,6 +32,6 @@ for i = 2:dLengthNonnumeric
     % Turn cell array into table
     tTemp = cell2table(cTemp);
     % Replace non-numeric columns of table with numeric column
-    tExchangeRates.(vNonnumerics(i)) = tTemp.cTemp;
+    tExchange.(vNonnumerics(i)) = tTemp.cTemp;
 end
 end

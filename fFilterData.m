@@ -1,5 +1,6 @@
 function fFilterData()
     clear; clc;
+    addpath(genpath('folder_FunctionsFilteringData'));
     
     % Get a list of all files and folders in this folder.
     sPath2ImportedData = append(pwd, '\', 'folder_ImportedData\');
@@ -74,7 +75,7 @@ function fFilterData()
             % call the dynamic screen
             rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCountryStructure.(sCurrentCompanyKey));
         end
-        
+             
         % here comes the 25 companies filter
         rCountryStructure = fFilter25Companies(rCountryStructure);
        

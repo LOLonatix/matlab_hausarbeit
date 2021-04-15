@@ -8,6 +8,9 @@ function lReturn = fCheckDataAvailability(rCompany)
     % since TRI data was loaded seperately, it could occur that no TRI data
     % was received for a company --> remove
 
+    % this filter checks for necessary data availability explained on page
+    % 10 --> availability of associated stock return (calc. by tri),
+    % momentum (calculated by tri), sales and cost of goods sold (cogs)
     lReturn = false;
     if isfield(rCompany, 'TRI') == true
         if length(rCompany.MARKET_VALUE) == 1 || length(rCompany.UNADJUSTED_PRICE) == 1 || length(rCompany.SALES) == 1 %|| length(rCompany.ACCOUNTS_RECEIVABLE) == 1 || length(rCompany.INVENTORY) == 1 || length(rCompany.PREPAID_EXPENSES) == 1|| length(rCompany.DEFERRED_REVENUE) == 1|| length(rCompany.TRADE_ACCOUNTS_PAYABLE) == 1 || length(rCompany.ACCRUED_PAYROLL) == 1 || length(rCompany.OTHER_ACCRUED_EXPENSES) == 1

@@ -1,5 +1,6 @@
 function fLoadRawData()
     clear; clc; 
+    addpath(genpath('folder_FunctionsLoadingRawData'));
 
     % Get a list of all files and folders in this folder.
     sPath2RawData = append(pwd, '\', 'folder_RawData');
@@ -175,7 +176,7 @@ function fLoadRawData()
 
                 % get total amount colums in this sheet
                 print_path = sLoadString
-                dCompaniesInSheet = dAmountCompanies*dStepSize
+                dCompaniesInSheet = dAmountCompanies*dStepSize;
              
                 % counter used to count steps within step_size. reset for each
                 % sheet
@@ -195,9 +196,11 @@ function fLoadRawData()
                     end
                     
                     if lErrorBool ~= true
-                        % load column as vector holding doubles
-                        %vCurrentColumn = cell2mat(cNumTemp(:,column));
+                        % load column as vector holding doubles, replace
+                        % string with NaN
                         vCurrentColumn = cTemp(2:313,column);
+                        vCurrentColumn(cellfun(@ischar, vCurrentColumn)) = {nan};
+                        vCurrentColumn = cell2mat(vCurrentColumn);
 
                         % get current ts item key
                         sCurrentKey = cell2mat(cTsKeys(dKeyCounter+dCounter));
@@ -252,192 +255,8 @@ function fLoadRawData()
         end
     end
 end
-   
 
-function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
-    % create path to tri-folder
-    sPathToTriData = append(sPath2Country, '\', 'TRI_DATA');
-    % find all parts/data in this folder
-    rFilesInTriFolder = dir(sPathToTriData);
-        
-    % now take only the true files, removing the github folders 
-    lFilesToLoad = ~[rFilesInTriFolder.isdir];
-    rFilesInTriFolder = extractfield(rFilesInTriFolder, 'name');
-    rFilesInTriFolder = rFilesInTriFolder(lFilesToLoad);
 
-    dAmountParts = length(rFilesInTriFolder)/2;
-    
-    for i=1:dAmountParts
-        % load the static order of companies and their key
-        % create string "PART_NAME"
-        sCurrentPartString = append('PART', int2str(i),'_');
-        
-        % find files only containing "PART_NAME"
-        lCurrentPartFiles = contains(rFilesInTriFolder, sCurrentPartString);
-        
-        % create bools for static/ts parts
-        lAllStaticParts = contains(rFilesInTriFolder,'STATIC');
-        lAllTsParts = contains(rFilesInTriFolder,'TS');
-
-        % start the loading process with the static files for each part,
-        % which is a bool-matrix
-        lCurrentStaticFile = lCurrentPartFiles & lAllStaticParts;
-        lCurrentTsFile =  lCurrentPartFiles & lAllTsParts;
-
-        % find loading path via previous bool-matrix
-   
-        sLoadStringStatic = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentStaticFile)));
-        sLoadStringTs = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentTsFile)));
-        
-        % load ts and static data
-        [~,~,cTextStatic]=xlsread(sLoadStringStatic);
-        [cNumTS,~,cTextTS]=xlsread(sLoadStringTs);
-     
-        % calculate the amount of companies
-        dAmountCompaniesStatic = size(cTextStatic);
-        %dAmountCompaniesStatic = dAmountCompaniesStatic(1);
-        
-        % delete last rows if totally empty
-        counter = 0;
-        for p=1:dAmountCompaniesStatic(1)
-            lOnlyFoundNaN = true;
-            cLastRow = cTextStatic(end-p,:);
-            for c=1:dAmountCompaniesStatic(2)
-                value = cell2mat(cLastRow(c));
-                if isnan(value) == false
-                    lOnlyFoundNaN = false;
-                    break;
-                end
-            end
-            if lOnlyFoundNaN == true
-                counter = counter +1;
-            else
-                break;
-            end
-        end
-        while counter > 0
-            cTextStatic(end) = [];
-            counter = counter - 1;
-        end
-        
-        dAmountCompaniesStatic = size(cTextStatic);
-        dAmountCompaniesTs = size(cNumTS);
-        dAmountCompaniesTs = dAmountCompaniesTs(2);
-    
-        for p=2:dAmountCompaniesStatic(1)
-            % use same function for creating struct.key string
-            
-            sKey1 = cell2mat(cTextStatic(p,1));
-            sKey2 = cell2mat(cTextStatic(p,2));
-            
-            sKey1 = fStringToStructKey(sKey1);
-           
-            if ischar(sKey2) == true 
-                if matches(sKey2, 'NA') == true | matches(sKey2, '#NA')== true
-                    sKey2 = NaN;
-                    lHelper = false;
-                else
-                    sKey2 = fStringToStructKey(sKey2);
-                    lHelper = true;
-                end
-            else
-                sKey2 = fStringToStructKey(sKey2);
-                lHelper = true;
-            end
-            
-            % check if last tri-data-sets were 'ERROR' message, otherwise
-            % get tri-data
-            if p <= dAmountCompaniesTs
-                vTriData = cTextTS(2:end,p);
-            else
-                vTriData = NaN;
-            end
-            
-            % save vTriData under tri key for sCompanyKey
-            if isfield(rCountryStructure, sKey1) == true
-                rCountryStructure.(sKey1).TRI = vTriData;
-            elseif lHelper == true && isfield(rCountryStructure, sKey2) == true
-                rCountryStructure.(sKey2).TRI = vTriData;
-            end
-        end
-    end
-end
-
-function sOutputString = fStringToStructKey(sInputString)
-    
-    if isstring(sInputString) ~= true
-        sInputString = string(sInputString);
-    end
-    
-    % starting with digit?
-    digit_bools = isstrprop(sInputString,'digit');
-    if length(digit_bools) > 1
-        if digit_bools(1) == 1
-        sInputString = strcat('rNumber_', sInputString);
-        end
-    end
-    % replace ':' and '.' with '_'
-    sInputString = regexprep(sInputString, ':', '_');
-    sInputString = strrep(sInputString, '.', '');
-    sInputString = strrep(sInputString, ';', '_');
-    % replace '@' with 'at_'
-    sInputString = regexprep(sInputString, '[@]', 'at_');
-    % this one removes underscores from the beginning
-    sInputString = regexprep(sInputString,'^_','','emptymatch');
-    
-    sInputString = regexprep(sInputString, ' +', '_');
-    sInputString = regexprep(sInputString, '&+', '');
-    sInputString = regexprep(sInputString, '[/]','');
-    sInputString = regexprep(sInputString, '[£]','');
-    sInputString = regexprep(sInputString, '[:]','');
-    sInputString = regexprep(sInputString, '[(]','');
-    sInputString = regexprep(sInputString, '[)]','');
-    sInputString = regexprep(sInputString, '['']','');
-    sInputString = regexprep(sInputString, '[-]','');
-    sInputString = regexprep(sInputString, '[@]', '');
-    sInputString = regexprep(sInputString, '[+]', '');
-    sInputString = regexprep(sInputString, '[$]', '');
-    sInputString = regexprep(sInputString, '[,]', '');
-    sInputString = regexprep(sInputString, '[%]', '');
-    sInputString = regexprep(sInputString, '[#]', ''); 
-    sInputString = regexprep(sInputString, '[$]', '');
-%     % this one removes underscores from the beginning
-%     string = regexprep(string,'^_','','emptymatch');
-%     string = regexprep(string,'^_','','emptymatch');
-    % since struct.keys can only be as long as 63 characters, remove rest
-    if strlength(sInputString) > 63
-        sInputString = sInputString(1:63);
-    end
-    if sInputString(1) == '_'
-        sInputString = sInputString(2:end);
-    end
-    sOutputString = sInputString;
-end
-
-function string = fCreateKey(input_cell)
-  string = cell2mat(input_cell);
-    string = regexprep(string, ' +', '_');
-    string = regexprep(string, '&+', '');
-    string = regexprep(string, '[.]','');
-    string = regexprep(string, '[/]','');
-    string = regexprep(string, '[£]','');
-    string = regexprep(string, '[:]','');
-    string = regexprep(string, '[(]','');
-    string = regexprep(string, '[)]','');
-    string = regexprep(string, '['']','');
-    string = regexprep(string, '[-]','');
-    string = regexprep(string, '[0-9]', '');
-    string = regexprep(string, '[@]', '');
-    string = regexprep(string, '[+]', '');
-    string = regexprep(string, '[$]', '');
-    string = regexprep(string, '[,]', '');
-    string = regexprep(string, '[%]', '');
-    string = regexprep(string, '[#]', '');
-    % this one removes underscores from the beginning
-    string = regexprep(string,'^_','','emptymatch');
-    string = regexprep(string,'^_','','emptymatch');
-   
-end
 
    
   

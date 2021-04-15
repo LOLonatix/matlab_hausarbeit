@@ -3,7 +3,6 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
     % get all companies
     cAllCompanies = fieldnames(rCountryStructure);
     cCompaniesToRemove = {};
-    counter = 0;
     vActiveCompanies = zeros(312,1);
     for i=1: length(cAllCompanies)
         vMarketValue = rCountryStructure.(cell2mat(cAllCompanies(i))).MARKET_VALUE;
@@ -11,9 +10,6 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
         % better be safe then sorry
         if length(vMarketValue) > 1
             lActiveCompany = ~isnan(vMarketValue);
-            if lActiveCompany(end) == 1
-                counter = counter +1;
-            end
             vActiveCompanies = vActiveCompanies+lActiveCompany;
         end
     end
@@ -62,10 +58,16 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
         % run static filter to remove companies with not sufficient data 
         lReturn = fCheckDataAvailability(rCurrentCompany);
         
-        % if not given, delete this company
+        % if not given, add this company to companies to be removed
         if lReturn == true
-            rCountryStructure = rmfield(rCountryStructure, cell2mat(cAllCompanies(i)));
+            cCompaniesToRemove(end) = cAllCompanies(i);
         end
     end
+    
+    % remove those companies
+    for t=1:length(cCompaniesToRemove)
+       rCountryStructure = rmfield(rCountryStructure, cell2mat(cCompaniesToRemove(i)));
+    end
+    
     returnCountryStructure = rCountryStructure;
 end

@@ -26,7 +26,7 @@ function rReturnCompany = fDynamicScreening(rCompany)
             vReturns(end-i) = NaN;
         end
         % filter 4
-        if vReturns(end-i) >= 3.0 | vReturns(end-i-1)>= 3.0
+        if vReturns(end-i) >= 3.0 || vReturns(end-i-1)>= 3.0
             if ((1+vReturns(end-i-1))*(1+vReturns(end-i))-1) <0.5
                 vMV(end-i) = NaN;
                 vReturns(end-i) = NaN;
@@ -37,5 +37,7 @@ function rReturnCompany = fDynamicScreening(rCompany)
     rCompany.RETURN = vReturns;
     rCompany.MARKET_VALUE = vMV;
     rCompany.UNADJUSTED_PRICE = vUP;
+    
+    rCompany = fDynamicDataAvailabilityFilter(rCompany);
     rReturnCompany = rCompany;
 end

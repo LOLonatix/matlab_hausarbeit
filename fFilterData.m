@@ -20,11 +20,13 @@ function fFilterData()
         
     %% Get exchange rates from .mat-file or calculate them from the function
     % fExchangeRate
+
     if isfile('rExchangeRate.mat')
         load('rExchangeRate.mat','rExchangeRate');
     else
         rExchangeRate = fExchangeRate();
     end
+
     %% start iterating over each country
     dNumberCountries = length(cCountryNames);
     for i=1:dNumberCountries
@@ -50,6 +52,7 @@ function fFilterData()
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
 
+            
             %% transforming local currency in USD
             sCountryName = regexprep(sCurrentCountryName,'.mat','');
             cEuro = {'AUSTRIA', 'BELGIUM', 'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'IRELAND', 'ITALY', 'NETHERLANDS', 'PORTUGAL', 'SPAIN'};
@@ -63,7 +66,6 @@ function fFilterData()
                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
                 end
             end
-            
             %% call the static filtering function fStaticScreening
             lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);
 

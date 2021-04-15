@@ -11,7 +11,9 @@ function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
     rCompany.BOOK_TO_MARKET = vBook2Market;
     
     vTotalAssets = rCompany.TOTAL_ASSETS(13:end);
-    vLaggedTotalAssets = rCompany.TOTAL_ASSETS(1:end-13);
+    vTotalAssets = [nan(12,1); vTotalAssets];
+    vLaggedTotalAssets = rCompany.TOTAL_ASSETS(1:end-12);
+    vLaggedTotalAssets =  [vLaggedTotalAssets; nan(12,1)];
     
     %% Now transform them into their logical value for > 0
     lLaggedMV = vLaggedMV>0;
@@ -20,18 +22,17 @@ function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
     lLaggedTotalAssets = vLaggedTotalAssets>0;
     
     %% Create complete logical vector, only if each logical is true
-    lLogicalFilter = vLaggedMV & lBook2Market & lTotalAssets & lLaggedTotalAssets;
+    lLogicalFilter = lLaggedMV & lBook2Market & lTotalAssets & lLaggedTotalAssets;
     
     %% Apply this vector on all TS-Items of company
     cAllFields = fieldnames(rCompany);
     for i=17:length(cAllFields)
         sFieldName = cell2mat(cAllFields(i));
         vField = rCompany.(sFieldName);
-        
         if length(vField) == 312
             vField(~lLogicalFilter) = NaN;
         else
-            lFilter2Use = [nan(12,1),lLogicalFilter];
+            lFilter2Use = [zeros(12,1); lLogicalFilter];
             vField(~lFilter2Use) = NaN;
         end
         rCompany.(sFieldName) = vField;

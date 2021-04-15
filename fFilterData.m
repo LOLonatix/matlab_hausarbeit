@@ -1,6 +1,7 @@
 function fFilterData()
     clear; clc;
     addpath(genpath('folder_FunctionsFilteringData'));
+    addpath(genpath('folder_FunctionsCurrency'));
 
     % Get a list of all files and folders in this folder.
     sPath2ImportedData = append(pwd, '\', 'folder_ImportedData\');

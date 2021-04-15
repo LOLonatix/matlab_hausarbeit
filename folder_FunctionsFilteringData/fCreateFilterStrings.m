@@ -1,4 +1,5 @@
 function rStringFiltersStatic = fCreateFilterStrings(cCountryNames)
+    addpath(genpath('folder_FunctionsCurrency'));
     rStringFiltersStatic = struct;
     rID = fIDStruct();
     

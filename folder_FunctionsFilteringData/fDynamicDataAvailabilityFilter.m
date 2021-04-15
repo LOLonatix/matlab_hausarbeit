@@ -2,9 +2,9 @@ function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
     %% First of all, get all values necessary for filters explained on page 10
     vLaggedMV = rCompany.MARKET_VALUE(2:end);
     if vLaggedMV(1) > 0
-        vLaggedMV = [1, vLaggedMV];
+        vLaggedMV = [1; vLaggedMV];
     else
-        vLaggedMV = [NaN, vLaggedMV];
+        vLaggedMV = [NaN; vLaggedMV];
     end
     
     vBook2Market = (rCompany.COMMON_EQUITY+rCompany.DEFERRED_TAXES)./rCompany.MARKET_VALUE;

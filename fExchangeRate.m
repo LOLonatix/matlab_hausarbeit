@@ -1,4 +1,4 @@
-%function [rExchangeRate] = fExchangeRate()
+function [rExchangeRate] = fExchangeRate()
 %% EXCHANGE RATES
 % Function used to define the exchange rate from US Dollar to the countries
 % currency. The value in country currency has to be divided by the exchange
@@ -86,4 +86,4 @@ for i = 1:dAmountCountries
 end
 % Save data for process speed up
 save('rExchangeRate.mat','rExchangeRate')
-%end
+end

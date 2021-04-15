@@ -1,2 +1,5 @@
-clear; clc
-a = [Inf NaN 1 2 3]
+if isfile('rExchangeRate.mat')
+        load('rExchangeRate.mat');
+    else
+        print('error')
+    end

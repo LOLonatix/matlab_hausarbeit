@@ -1,4 +1,4 @@
-function [rExchangeRate] = fExchangeRate()
+%function [rExchangeRate] = fExchangeRate()
 %% EXCHANGE RATES
 % Function used to define the exchange rate from US Dollar to the countries
 % currency. The value in country currency has to be divided by the exchange
@@ -39,7 +39,7 @@ cCountryNames = {'ARGENTINA', 'AUSTRALIA', 'AUSTRIA', 'BELGIUM', 'BRAZIL', 'CANA
     'NEW_ZEALAND', 'NORWAY', 'PAKISTAN', 'PERU', 'PHILIPPINES', 'POLAND', 'PORTUGAL',...
     'RUSSIA', 'SINGAPORE', 'SOUTH_AFRICA', 'SPAIN', 'SWEDEN', 'SWITZERLAND', 'TAIWAN',...
     'THAILAND', 'TURKEY'};
-dAmountCountries = length(cCountryNames);
+dAmountCountries = length(cCountryNames)
 
 % Iterate through countries to add respective exchange rate to struct
 for i = 1:dAmountCountries
@@ -78,12 +78,11 @@ for i = 1:dAmountCountries
     % for the first currency (Euro is known not to have NaNs)
     rExchangeRate.(sCountryName)(lExchangeNaN) = rExchangeTRI.(sCountryName).(cCurrencies{1})(lExchangeNaN);
     % Exceptions for Finland and Portugal as they have only calculated
-    % exchange rates - the whole array with the data of the former currency
-    % is added to the struct
+    % exchange rates - the whole array with the data of the former is added to the struct
     if sum(contains(['FINLAND', 'PORTUGAL'],sCountryName)) == 1
         rExchangeRate.(sCountryName) = rExchangeTRI.(sCountryName).(cCurrencies{1});
     end
 end
 % Save data for process speed up
 save('rExchangeRate.mat','rExchangeRate')
-end
+%end

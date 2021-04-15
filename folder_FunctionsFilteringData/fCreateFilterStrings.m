@@ -1,8 +1,6 @@
 function rStringFiltersStatic = fCreateFilterStrings(cCountryNames)
     rStringFiltersStatic = struct;
     rID = fIDStruct();
-
-    %load 'cCountryNames.mat'
     
     dAmountCountries = length(cCountryNames);
     for i=1:dAmountCountries
@@ -13,16 +11,6 @@ function rStringFiltersStatic = fCreateFilterStrings(cCountryNames)
         rStringFiltersStatic.(sCountryName).GEOLN = rID.(sCountryName).GEOLN;
         rStringFiltersStatic.(sCountryName).COUNTRY_SPECIFIC_FILTER = NaN;
     end
-    % BLOCK MAY BE USELESS DUE TO rID
-    % add further values with more then one currency/GGISN 
-    % lAllRawData = false;
-    % if lAllRawData == true
-    % currencies for european countries other then euro are still missing
-    % --> still needed? As everything is added in the ISINCurrency-function
-    % rStringFiltersStatic.HONG_KONG.GGISN = [rStringFiltersStatic.HONG_KONG.GGISN, "BM", "KY"];
-    % rStringFiltersStatic.CZECH.GGISN = [rStringFiltersStatic.CZECH.GGISN, "CS"];
-    % rStringFiltersStatic.RUSSIA.CURRENCY = [rStringFiltersStatic.RUSSIA.CURRENCY, "USD"];
-    % end
     
     % create a list with the generic keywords for filtering
     rStringFiltersStatic.GenericKeywords = ["1000DUPL", "DULP", "DUP", "DUPE", "DUPL", "DUPLI","DUPLICATE", "XSQ", "XETa", "ADR", "GDR", "PF", "’PF’", "PFD", "PREF", "PREFERRED", "PRF", "WARR", "WARRANT", "WARRANTS", "WARRT", "WT", "WTS","WTS2", "%", "DB", "DCB", "DEB", "DEBENTURE", "DEBENTURES", "DEBT", ".IT", ".ITb", "INV", "INV TST", "INVESTMENT TRUST","RLST IT", "TRUST", "TRUST UNIT", "TRUST UNITS", "TST","TST UNIT", "TST UNITS", "UNIT", "UNIT TRUST", "UNITS","UNT", "UNT TST", "UT", "AMUNDI", "ETF", "INAV", "ISHARES", "JUNGE", "LYXOR", "X-TR", "EXPD", "EXPIRED", "EXPIRY", "EXPY", "ADS", "BOND", "CAP.SHS", "CONV", "CV", "CVT", "DEFER","DEP", "DEPY", "ELKS", "FD", "FUND", "GW.FD", "HI.YIELD","HIGH INCOME", "IDX", "INC.&GROWTH", "INC.&GW","INDEX", "LP", "MIPS", "MITS", "MITT, MPS", "NIKKEI", "NOTE","OPCVM", "ORTF", "PARTNER", "PERQS", "PFC", "PFCL", "PINES", "PRTF", "PTNS", "PTSHP", "QUIBS", "QUIDS", "RATE", "RCPTS", "REAL EST", "RECEIPTS", "REIT", "RESPT", "RETUR", "RIGHTS", "RST", "RTN.INC", "RTS", "SBVTG", "SCORE", "SPDR", "STRYPES", "TOPRS", "UTS", "VCT", "VTG.SAS", "XXXXX", "YIELD", "YLD"];

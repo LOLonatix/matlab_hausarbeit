@@ -1,6 +1,4 @@
 function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
-    sCountry = sCountry(1:end-4);
-    
     % set to false by function (is first filter), or to true if already
     % filtered out
     lReturn = fCheckDataAvailability(rCompany);
@@ -19,7 +17,7 @@ function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
          lReturn = true;
          
     % check screening 1-3 --> major, equity and primary
-    elseif sMajor ~= 'Y' || sType ~= 'EQ' || sQuote ~= 'P'
+    elseif sMajor ~= 'Y' | sType ~= 'EQ' | sQuote ~= 'P'
         lReturn = true;
     else
         

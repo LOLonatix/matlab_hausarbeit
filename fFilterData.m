@@ -13,32 +13,23 @@ function fFilterData()
         cCountryNames = cCountryNames(3:end);
     end
     %% Get struct with country specific filter strings from function fCreateFiltersStrings
-    lKeysLoaded = false;
-
     % Get struct with country specific filter strings
     rStringFiltersStatic = fCreateFilterStrings(cCountryNames);
-        
     %% Get exchange rates from .mat-file or calculate them from the function
-    % fExchangeRate
+    fExchangeRate
 
     if isfile('rExchangeRate.mat')
-        load('rExchangeRate.mat','rExchangeRate');
+       load('rExchangeRate.mat','rExchangeRate');
     else
-        rExchangeRate = fExchangeRate();
+       rExchangeRate = fExchangeRate();
     end
-
-    %% start iterating over each country
+    % start iterating over each country
     dNumberCountries = length(cCountryNames);
     for i=1:dNumberCountries
         sCurrentCountryName = cell2mat(cCountryNames(i));
-        sPath2Country = append(sPath2ImportedData, sCurrentCountryName);
-        load(sPath2Country, 'rCountryStructure')
-
-        if lKeysLoaded ~= true
-            load(sPath2Country, 'cListKeys');
-            lKeysLoaded = true;
-        end
-
+        rCountryStructure = fLoadCountryStructure('folder_ImportedData', sCurrentCountryName);
+    end
+     %% test   
         %% start iterating over each company
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
@@ -66,9 +57,9 @@ function fFilterData()
                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
                 end
             end
+         
             %% call the static filtering function fStaticScreening
             lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);
-
             % if the company has to be removed, add it to the cell-list
             if lRemoveCompany == true
                 cCompanyKeysToBeRemoved{end+1} = sCurrentCompanyKey;
@@ -81,7 +72,7 @@ function fFilterData()
             sCompanyKeyToRemove = cell2mat(cCompanyKeysToBeRemoved(x));
             rCountryStructure = rmfield(rCountryStructure, sCompanyKeyToRemove);
         end
-
+    
         %% after deleting the companies, calculate the return and call the dynamic filters (since indices were removed, calc. length again)
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
@@ -95,18 +86,21 @@ function fFilterData()
             %% call the dynamic screen, which calls the fDynamicDataAvailabilityFilter-function
             rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCountryStructure.(sCurrentCompanyKey));
         end
-
+      
         %% Filter for <25 companies active at a given time
         rCountryStructure = fFilter25Companies(rCountryStructure);
 
         %% save the filtered Data under "folder_FilteredData", depending on their size
-        sLastWarning = ('');
-        sSavePath = append(pwd, '\folder_FilteredData\', sCurrentCountryName);
-        save(sSavePath, 'rCountryStructure', 'cListKeys');
-        [~,id]=lastwarn('');
-        if strcmp(id,'MATLAB:save:sizeTooBigForMATFile')
-            print = "saved as -v7.3"
-            save(sSavePath, 'rCountryStructure', 'cListKeys', '-v7.3');
-        end
+        fSaveCountryStructure('folder_FilteredData',sCurrentCountryName, rCountryStructure);
+      
+
+%sLastWarning = ('');
+%         sSavePath = append(pwd, '\folder_FilteredData\', sCurrentCountryName);
+%         save(sSavePath, 'rCountryStructure', 'cListKeys');
+%         [~,id]=lastwarn('');
+%         if strcmp(id,'MATLAB:save:sizeTooBigForMATFile')
+%             print = "saved as -v7.3"
+%             save(sSavePath, 'rCountryStructure', 'cListKeys', '-v7.3');
+%         end
     end
-end
+%end

@@ -118,7 +118,7 @@ function fLoadRawData()
                 sCompanyString = fStringToStructKey(sFieldToUse);
 
                 % create struct.key
-                 rCountryPartStructure.(sCompanyString) = struct;
+                rCountryPartStructure.(sCompanyString) = struct;
 
                 % initialize as NaN to be able to skip empty lines in TS later
                 % on (created by datastream "$ERROR, value not found" 
@@ -146,6 +146,7 @@ function fLoadRawData()
             % "struct_arrays" to use indexing, the latter was discovered close
             % before the deadline
             cAllCompanyKeys = fieldnames(rCountryPartStructure);
+            print = sLoadString
             dAmountCompanies = length(cAllCompanyKeys)
            
 
@@ -175,7 +176,6 @@ function fLoadRawData()
                 cTemp(:,1) = [];
 
                 % get total amount colums in this sheet
-                print_path = sLoadString
                 dCompaniesInSheet = dAmountCompanies*dStepSize;
              
                 % counter used to count steps within step_size. reset for each
@@ -245,14 +245,16 @@ function fLoadRawData()
         % finally save the countrie's loaded data under 'folder_ImportedData'
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
-        sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
-        sLastWarning = ('');
-        save(sSavePath, 'rCountryStructure', 'cListKeys');
-        [~,id]=lastwarn('');
-        if strcmp(id,'MATLAB:save:sizeTooBigForMATFile')
-            print = "saved as -v7.3"
-            save(sSavePath, 'rCountryStructure', 'cListKeys', '-v7.3');
-        end
+        fSaveCountryStructure('folder_ImportedData',sCurrentCountry, rCountryStructure);
+        
+%         sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
+%         sLastWarning = ('');
+%         save(sSavePath, 'rCountryStructure', 'cListKeys');
+%         [~,id]=lastwarn('');
+%         if strcmp(id,'MATLAB:save:sizeTooBigForMATFile')
+%             print = "saved as -v7.3"
+%             save(sSavePath, 'rCountryStructure', 'cListKeys', '-v7.3');
+%         end
     end
 end
 

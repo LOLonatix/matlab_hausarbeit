@@ -11,8 +11,6 @@ function [rExchangeRate] = fExchangeRate()
 % Struct with the exchange rates for Euro and each occuring country
 % specific currency (former European currencies)
 %% FUNCTION Setup
-clear; clc;
-
 % Add folder with excel files to path
 addpath(genpath('folder_ExchangeRates'));
 % Create an empty struct for the exchange rates (function return)

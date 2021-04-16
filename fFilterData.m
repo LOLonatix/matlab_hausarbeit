@@ -27,7 +27,7 @@ function fFilterData()
     dNumberCountries = length(cCountryNames);
     for i=1:dNumberCountries
         sCurrentCountryName = cell2mat(cCountryNames(i));
-        rCountryStructure = fLoadCountryStructure('folder_ImportedData', sCurrentCountryName);
+        rCountryStructure = fLoadCountryStructure('folder_ImportedData', sCurrentCountryName(1:end-5));
     end
      %% test   
         %% start iterating over each company

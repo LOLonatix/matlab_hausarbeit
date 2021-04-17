@@ -129,9 +129,8 @@ function fLoadRawData()
                 for column=2:dSizeCTemp(2)
                     cCurrentValue = cell2mat(cTemp(row, column));
                     sKeyString2Use = cell2mat(cListKeys(column-1));
-                    
-                    if isa(cCurrentValue, 'string') == true
-                        if matches(cCurrentValue, 'NA') == true || matches(cCurrentValue, '#N/A')== true || ...
+                    if isa(cCurrentValue, 'char') == true
+                        if matches(cCurrentValue, 'NA') == true | matches(cCurrentValue, '#N/A')== true | ...
                                 matches(cCurrentValue, '#NA')== true
                             cCurrentValue = NaN;
                         end
@@ -246,7 +245,7 @@ function fLoadRawData()
         % finally save the countrie's loaded data under 'folder_ImportedData'
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
-        fSaveCountryStructure('folder_ImportedData',sCurrentCountry, rCountryStructure);
+        fSaveCountryStructure('folder_ImportedData', sCurrentCountry, rCountryStructure);
     end
 end
 

@@ -15,14 +15,13 @@ function fFilterData()
     %% Get struct with country specific filter strings from function fCreateFiltersStrings
     % Get struct with country specific filter strings
     rStringFiltersStatic = fCreateFilterStrings(cCountryNames);
-    %% Get exchange rates from .mat-file or calculate them from the function
-    fExchangeRate
+    %% Get exchange rates from .mat-file or calculate them from the function fExchangeRate
 
-    if isfile('rExchangeRate.mat')
-       load('rExchangeRate.mat','rExchangeRate');
-    else
-       rExchangeRate = fExchangeRate();
-    end
+%     if isfile('rExchangeRate.mat')
+%        load('rExchangeRate.mat','rExchangeRate');
+%     else
+%        rExchangeRate = fExchangeRate();
+%     end
     % start iterating over each country
     dNumberCountries = length(cCountryNames);
     for i=1:dNumberCountries
@@ -43,20 +42,20 @@ function fFilterData()
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
 
-            
-            %% transforming local currency in USD
-            sCountryName = regexprep(sCurrentCountryName,'.mat','');
-            cEuro = {'AUSTRIA', 'BELGIUM', 'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'IRELAND', 'ITALY', 'NETHERLANDS', 'PORTUGAL', 'SPAIN'};
-            lLegalCurrency = contains(rStringFiltersStatic.(sCountryName).CURRENCY,rCurrentCompany.CURRENCY);
-            if sum(lLegalCurrency) == 1
-                if find(lLegalCurrency) == 2 && sum(contains(cEuro,sCountryName)) == 1
-                    rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.EURO);
-                    %elseif find(lLegalCurrency) == 2 && isequal(sCountryName,'RUSSIA')
-                    %rCurrentCompany = fCalculateDollarValue(rCurrentCompany,vExchangeRate);
-                elseif find(lLegalCurrency) == 1
-                    rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
-                end
-            end
+%             
+%             %% transforming local currency in USD
+%             sCountryName = regexprep(sCurrentCountryName,'.mat','');
+%             cEuro = {'AUSTRIA', 'BELGIUM', 'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'IRELAND', 'ITALY', 'NETHERLANDS', 'PORTUGAL', 'SPAIN'};
+%             lLegalCurrency = contains(rStringFiltersStatic.(sCountryName).CURRENCY,rCurrentCompany.CURRENCY);
+%             if sum(lLegalCurrency) == 1
+%                 if find(lLegalCurrency) == 2 && sum(contains(cEuro,sCountryName)) == 1
+%                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.EURO);
+%                     %elseif find(lLegalCurrency) == 2 && isequal(sCountryName,'RUSSIA')
+%                     %rCurrentCompany = fCalculateDollarValue(rCurrentCompany,vExchangeRate);
+%                 elseif find(lLegalCurrency) == 1
+%                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
+%                 end
+%             end
          
             %% call the static filtering function fStaticScreening
             lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);

@@ -31,7 +31,7 @@ for i=1:dNumberCountries
     % Loading the struct of the current country.
     sCurrentCountryName = cell2mat(cCountryNames(i));
     sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
-    rCountryStructure = fLoadCountryStructure('folder_FilteredData', sCurrentCountryName);
+    load(sPath2Country, 'rCountryStructure');
     
     %Calculate operating profitability farma and french
     [mOpProfitff] = fOpProfitff(rCountryStructure);

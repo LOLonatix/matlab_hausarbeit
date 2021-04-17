@@ -1,15 +1,15 @@
-function [AOpProfitff] = fOpProfitff(currentCountryStructure)
+function [mOpProfitff] = fOpProfitff(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
-AOpProfitff=[];
+mOpProfitff=[];
 for i =1:numel(cFieldNames)
    
-   cASales = currentCountryStructure.(cFieldNames{i}).SALES;
-   cACOGS = currentCountryStructure.(cFieldNames{i}).COGS;
-   cASGA = currentCountryStructure.(cFieldNames{i}).SG_A;
-   cAIE=currentCountryStructure.(cFieldNames{i}).INTEREST_EXPENSES;
-   cABookEquity= currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
+   cSales = currentCountryStructure.(cFieldNames{i}).SALES;
+   cCOGS = currentCountryStructure.(cFieldNames{i}).COGS;
+   cSGA = currentCountryStructure.(cFieldNames{i}).SG_A;
+   cIE=currentCountryStructure.(cFieldNames{i}).INTEREST_EXPENSES;
+   cBookEquity= currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
    
-   AOpProfitff=[AOpProfitff; cASales-cACOGS-cASGA-cAIE./cABookEquity]; 
+   mOpProfitff=[mOpProfitff; cSales-cCOGS-cSGA-cIE./cBookEquity]; 
    
 end
 

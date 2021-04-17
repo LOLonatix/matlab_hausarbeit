@@ -11,9 +11,7 @@ function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
     rCompany.BOOK_TO_MARKET = vBook2Market;
     
     vTotalAssets = rCompany.TOTAL_ASSETS(13:end);
-    vTotalAssets = [nan(12,1); vTotalAssets];
     vLaggedTotalAssets = rCompany.TOTAL_ASSETS(1:end-12);
-    vLaggedTotalAssets =  [vLaggedTotalAssets; nan(12,1)];
     
     %% Now transform them into their logical value for > 0
     lLaggedMV = vLaggedMV>0;

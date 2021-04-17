@@ -241,20 +241,12 @@ function fLoadRawData()
         end
 
         rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure);
+        rCountryStructure = fLoad12MonthsTA(sPath2Country, rCountryStructure);
 
         % finally save the countrie's loaded data under 'folder_ImportedData'
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
         fSaveCountryStructure('folder_ImportedData',sCurrentCountry, rCountryStructure);
-        
-%         sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
-%         sLastWarning = ('');
-%         save(sSavePath, 'rCountryStructure', 'cListKeys');
-%         [~,id]=lastwarn('');
-%         if strcmp(id,'MATLAB:save:sizeTooBigForMATFile')
-%             print = "saved as -v7.3"
-%             save(sSavePath, 'rCountryStructure', 'cListKeys', '-v7.3');
-%         end
     end
 end
 

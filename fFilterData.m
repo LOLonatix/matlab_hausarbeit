@@ -92,15 +92,4 @@ function fFilterData()
 
         %% save the filtered Data under "folder_FilteredData", depending on their size
         fSaveCountryStructure('folder_FilteredData',sCurrentCountryName, rCountryStructure);
-      
-
-%sLastWarning = ('');
-%         sSavePath = append(pwd, '\folder_FilteredData\', sCurrentCountryName);
-%         save(sSavePath, 'rCountryStructure', 'cListKeys');
-%         [~,id]=lastwarn('');
-%         if strcmp(id,'MATLAB:save:sizeTooBigForMATFile')
-%             print = "saved as -v7.3"
-%             save(sSavePath, 'rCountryStructure', 'cListKeys', '-v7.3');
-%         end
-    end
-%end
+end

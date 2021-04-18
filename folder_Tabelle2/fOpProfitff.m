@@ -1,23 +1,19 @@
-function [dMeanOpProfitff,dSDOpProfitff,d1stQOpProfitff,d25stQOpProfitff,d50stQOpProfitff,d75stQOpProfitff,d99stQOpProfitff] = fOpProfitff(currentCountryStructure)
+function [vOpProfitff] = fOpProfitff(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
-cAOpProfitff={};
+cOpProfitff={};
 for i =1:numel(cFieldNames)
    
-   cASales = currentCountryStructure.(cFieldNames{i}).SALES;
-   cACOGS = currentCountryStructure.(cFieldNames{i}).COGS;
-   cASGA = currentCountryStructure.(cFieldNames{i}).SG_A;
-   cAIE=currentCountryStructure.(cFieldNames{i}).INTEREST_EXPENSES;
-   cABookEquity= currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
+   cSales = currentCountryStructure.(cFieldNames{i}).SALES;
+   cCOGS = currentCountryStructure.(cFieldNames{i}).COGS;
+   cSGA = currentCountryStructure.(cFieldNames{i}).SG_A;
+   cIE=currentCountryStructure.(cFieldNames{i}).INTEREST_EXPENSES;
+   cBookEquity= currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
    %hier weiter
-   cAOpProfitff=[cAOpProfitff; cASales-cACOGS-cASGA-cAIE./cABookEquity] ; 
+   cZerosInBE = cBookEquity == 0;
+   cBookEquity(cZerosInBE)=NaN;
+   cOpProfitff=[cOpProfitff; cSales-cCOGS-cSGA-cIE./cBookEquity] ; 
 end
-dMeanOpProfitff = mean(cell2mat(cAOpProfitff),'omitnan');
-dSDOpProfitff = std(cell2mat(cAOpProfitff),'omitnan');
-d1stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.01);
-d25stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.25);
-d50stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.50);
-d75stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.75);
-d99stQOpProfitff = quantile(cell2mat(cAOpProfitff),0.99);
+[vOpProfitff] = fConclude(cOpProfitff)
 end
 
 

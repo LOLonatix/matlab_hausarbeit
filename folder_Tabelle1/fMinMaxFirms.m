@@ -14,14 +14,14 @@ function[dMinFirms,dMaxFirms,vFirms]=fMinMaxFirms(mMVall)
 % - vector with the active companies per month
 %% FUNCTION
 % turning NANs of mMVall into zeros
-mMVall(isnan(mMVall))=0;
+mMVall(isnan(mMVall)) = 0;
 % finding nonzero elements and replacing by 1
 vActiveCompany = find(mMVall);
 mMVall(vActiveCompany)=1;
 % adding the ones in each row, thus counting the active firms per month
-vFirms=sum(mMVall,2);
+vFirms = sum(mMVall,2);
 % determining the minimal and maximal value (amount of firms)
-dMinFirms=min(vFirms);
+dMinFirms=min(vFirms(vFirms >= 25));
 dMaxFirms=max(vFirms);
 end
 

@@ -8,7 +8,9 @@ for i =1:numel(cFieldNames)
    cRepSGA = currentCountryStructure.(cFieldNames{i}).SG_A-currentCountryStructure.(cFieldNames{i}).RESEARCH_AND_DEVELOPMENT_COSTS;
    cTotal_Assets= currentCountryStructure.(cFieldNames{i}).TOTAL_ASSETS;
    
-   mOpProfit=[mOpProfit; cSales-cCOGS-cRepSGA./cTotal_Assets];  
+   cZerosInTA = cTotal_Assets == 0;
+   cTotal_Assets(cZerosInTA)=NaN;
+   mOpProfit=[mOpProfit; cSales-cCOGS-cRepSGA./cTotal_Assets]; 
    
 end
 

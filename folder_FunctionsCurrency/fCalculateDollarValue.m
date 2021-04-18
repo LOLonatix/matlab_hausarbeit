@@ -13,16 +13,18 @@ cItems = fieldnames(rCurrentCompany);
 % Iterate over the TS items
 for i = 17:44
     % Save current TS item data temporarily
-vTemp = rCurrentCompany.(cItems{i});
+    vTemp = rCurrentCompany.(cItems{i});
 % define data length to apply exchange rates correctly
-dTemp = length(vTemp);
+    dTemp = length(vTemp);
 % for data starting 31/07/1990
-if dTemp == 312
-    vTemp = vTemp./vExchangeRate(13:324);
-else
-    % for data starting 31/07/1989
-    vTemp = vTemp./vExchangeRate;
-end
+    if dTemp == 312
+        vTemp = vTemp./vExchangeRate(13:324);
+    else
+        % for data starting 31/07/1989
+        if dTemp ~= 1
+            vTemp = vTemp./vExchangeRate;
+        end
+    end
 % write dollar values in company struct
 rCurrentCompany.(cItems{i}) = vTemp;
 end

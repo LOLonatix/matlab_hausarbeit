@@ -1,9 +1,7 @@
 function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
     %% First of all, get all values necessary for filters explained on page 10
-  
     vLaggedMV = rCompany.MARKET_VALUE(2:end);
-    print_company = rCompany
-    print = vLaggedMV
+
     if vLaggedMV(1) > 0
         vLaggedMV = [1; vLaggedMV];
     else

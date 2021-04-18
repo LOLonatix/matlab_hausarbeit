@@ -1,33 +1,33 @@
-function [dMeanCbOpProfit,dSDCbOpProfit,d1stQCbOpProfit,d25stQCbOpProfit,d50stQCbOpProfit,d75stQCbOpProfit,d99stQCbOpProfit] = fCbOpProfit(currentCountryStructure,cAOpProfit)
+function [vCbOpProfit] = fCbOpProfit(currentCountryStructure,cOpProfit)
 cFieldNames = fieldnames(currentCountryStructure);
-cACbOpProfit=[];
-cACashBasedAdj=[];
+vCbOpProfit=[];
+vCbOpProfit_CurrentCompany={};
+vCashBasedAdj=[];
 for i =1:10
- rCurrentCompany = currentCountryStructure.(cFieldNames{i});
-    cATotal_Assets= rCurrentCompany.TOTAL_ASSETS;
+    rCurrentCompany = currentCountryStructure.(cFieldNames{i});
+    cTotal_Assets= rCurrentCompany.TOTAL_ASSETS;
     
 %    %nun cash-based adjustments ausrechnen
-   if length(rCurrentCompany.ACCOUNTS_RECEIVABLE) >1 && length(rCurrentCompany.INVENTORY) >1 && length(rCurrentCompany.PREPAID_EXPENSES) >1 && length(rCurrentCompany.DEFERRED_REVENUE) >1 && length(rCurrentCompany.TRADE_ACCOUNTS_PAYABLE) >1
+   if length(rCurrentCompany.ACCOUNTS_RECEIVABLE) >1 && length(rCurrentCompany.INVENTORY) >1 && length(rCurrentCompany.PREPAID_EXPENSES) >1 && length(rCurrentCompany.DEFERRED_REVENUE) >1 && length(rCurrentCompany.TRADE_ACCOUNTS_PAYABLE) >1 && length(rCurrentCompany.ACCRUED_PAYROLL) >1 && length(rCurrentCompany.OTHER_ACCRUED_EXPENSES) >1
         for k=13:312   
-            cADel_AccountsRec = rCurrentCompany.ACCOUNTS_RECEIVABLE(k)-rCurrentCompany.ACCOUNTS_RECEIVABLE(k-12);
-            cADel_Inventory = rCurrentCompany.INVENTORY(k)-rCurrentCompany.INVENTORY(k-12);
-            cADel_PrepExp = rCurrentCompany.PREPAID_EXPENSES(k)-rCurrentCompany.PREPAID_EXPENSES(k-12);
-            cADel_DefRevenue = rCurrentCompany.DEFERRED_REVENUE(k)-rCurrentCompany.DEFERRED_REVENUE(k-12);%Deferred 
-            cADel_TraAccPay = rCurrentCompany.TRADE_ACCOUNTS_PAYABLE(k)-rCurrentCompany.TRADE_ACCOUNTS_PAYABLE(k-12);
-            cADel_AccruedExp = rCurrentCompany.ACCRUED_PAYROLL(k)+rCurrentCompany.OTHER_ACCRUED_EXPENSES(k)-rCurrentCompany.ACCRUED_PAYROLL(k)-rCurrentCompany.OTHER_ACCRUED_EXPENSES(k-12);
-            cACashBasedAdj =-cADel_AccountsRec-cADel_Inventory-cADel_PrepExp+cADel_DefRevenue+cADel_TraAccPay+cADel_AccruedExp; 
+            cDel_AccountsRec = rCurrentCompany.ACCOUNTS_RECEIVABLE(k)-rCurrentCompany.ACCOUNTS_RECEIVABLE(k-12);
+            cDel_Inventory = rCurrentCompany.INVENTORY(k)-rCurrentCompany.INVENTORY(k-12);
+            cDel_PrepExp = rCurrentCompany.PREPAID_EXPENSES(k)-rCurrentCompany.PREPAID_EXPENSES(k-12);
+            cDel_DefRevenue = rCurrentCompany.DEFERRED_REVENUE(k)-rCurrentCompany.DEFERRED_REVENUE(k-12);%Deferred 
+            cDel_TraAccPay = rCurrentCompany.TRADE_ACCOUNTS_PAYABLE(k)-rCurrentCompany.TRADE_ACCOUNTS_PAYABLE(k-12);
+            cDel_AccruedExp = rCurrentCompany.ACCRUED_PAYROLL(k)+rCurrentCompany.OTHER_ACCRUED_EXPENSES(k)-rCurrentCompany.ACCRUED_PAYROLL(k)-rCurrentCompany.OTHER_ACCRUED_EXPENSES(k-12);
+            vCashBasedAdj =-cDel_AccountsRec-cDel_Inventory-cDel_PrepExp+cDel_DefRevenue+cDel_TraAccPay+cDel_AccruedExp; 
         end
+        cTotal_Assets = rCurrentCompany.TOTAL_ASSETS;
+        cZerosInTA = cTotal_Assets == 0;
+        cTotal_Assets(cZerosInTA)=NaN;        
+        vCbOpProfit_CurrentCompany=cell2mat(cOpProfit(i))+vCashBasedAdj./cTotalAssets;
    end
    
    
-   cACbOpProfit_CurrentCompany=cell2mat(cAOpProfit(i))+cACashBasedAdj./rCurrentCompany.TOTAL_ASSETS;
+   
+   vCbOpProfit = [vCbOpProfit; vCbOpProfit_CurrentCompany];
    
 end
-dMeanCbOpProfit = mean(cell2mat(cACbOpProfit),'omitnan');
-dSDCbOpProfit = std(cell2mat(cACbOpProfit),'omitnan');
-d1stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.01);
-d25stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.25);
-d50stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.50);
-d75stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.75);
-d99stQCbOpProfit = quantile(cell2mat(cACbOpProfit),0.99);
+[vCbOpProfit] = fConclude(vCbOpProfit);
 end

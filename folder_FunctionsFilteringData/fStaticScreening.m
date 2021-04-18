@@ -17,7 +17,7 @@ function lReturn = fStaticScreening(rCompany, sCountry, rStringFiltersStatic)
          lReturn = true;
          
     % check screening 1-3 --> major, equity and primary
-    elseif sMajor ~= 'Y' | sType ~= 'EQ' | sQuote ~= 'P'
+    elseif ~isequal(sMajor,'Y') || ~isequal(sType,'EQ') || ~isequal(sQuote,'P')
         lReturn = true;
     else
         

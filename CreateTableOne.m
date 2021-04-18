@@ -82,8 +82,9 @@ for i=1:dNumberCountries
     % Determine the start and end date of availability of data for the
     % country as first/last month with at least one active company using
     % the function 'fStartEndDate'.
-    [sStartDate,sEndDate] = fStartEndDate(vFirms,tDates);
 
+    [sStartDate,sEndDate] = fStartEndDate(vFirms,tDates);
+   
 %% Summarizing data
     % Summarizing country data into one cell array.
     cCurrentTable = {sName,sMarket,dAmountCompanies,dMinFirms,dMaxFirms,dMeanSize,dMedianSize,dAverageTotalSize,0,sStartDate,sEndDate};
@@ -92,7 +93,6 @@ for i=1:dNumberCountries
     % calculated with all average total sizes accessible.
     cTable1(i,:)=cCurrentTable;
 end
-
 %% Creating table 1
 % Turning cell array with results into table.
 tTable1 = cell2table(cTable1);

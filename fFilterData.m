@@ -59,7 +59,7 @@ function fFilterData()
     
         %% after deleting the companies, calculate the return and call the dynamic filters (since indices were removed, calc. length again)
         cAllCompanyKeys = fieldnames(rCountryStructure);
-        dAmountCompanies = length(cAllCompanyKeys);
+        dAmountCompanies = length(cAllCompanyKeys)
 
         for p=1:dAmountCompanies
             % get current key and the respective structure
@@ -84,7 +84,7 @@ function fFilterData()
             %% call the dynamic screen, which calls the fDynamicDataAvailabilityFilter-function
             rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCountryStructure.(sCurrentCompanyKey));
         end
-      
+        print = length(fieldnames(rCountryStructure))
         %% Filter for <25 companies active at a given time
         rCountryStructure = fFilter25Companies(rCountryStructure);
 

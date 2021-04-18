@@ -30,8 +30,11 @@ function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
         vField = rCompany.(sFieldName);
         if length(vField) == 312
             vField(~lLogicalFilter) = NaN;
-        else
+        elseif length(vField) == 324
             lFilter2Use = [zeros(12,1); lLogicalFilter];
+            vField(~lFilter2Use) = NaN;
+        elseif length(vField) == 323
+            lFilter2Use = [zeros(11,1); lLogicalFilter];
             vField(~lFilter2Use) = NaN;
         end
         rCompany.(sFieldName) = vField;

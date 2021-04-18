@@ -42,19 +42,6 @@ function fFilterData()
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
 
-            
-            %% transforming local currency in USD
-            sCountryName = regexprep(sCurrentCountryName,'.mat','');
-            cEuro = {'AUSTRIA', 'BELGIUM', 'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'IRELAND', 'ITALY', 'NETHERLANDS', 'PORTUGAL', 'SPAIN'};
-            lLegalCurrency = contains(rStringFiltersStatic.(sCountryName).CURRENCY,rCurrentCompany.CURRENCY);
-            if sum(lLegalCurrency) == 1
-                if find(lLegalCurrency) == 2 && sum(contains(cEuro,sCountryName)) == 1
-                    rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.EURO);
-                elseif find(lLegalCurrency) == 1
-                    rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
-                end
-            end
-         
             %% call the static filtering function fStaticScreening
             lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);
             % if the company has to be removed, add it to the cell-list
@@ -78,6 +65,20 @@ function fFilterData()
             % get current key and the respective structure
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
+            
+            %% transforming local currency in USD
+            sCountryName = regexprep(sCurrentCountryName,'.mat','');
+            cEuro = {'AUSTRIA', 'BELGIUM', 'FINLAND', 'FRANCE', 'GERMANY', 'GREECE', 'IRELAND', 'ITALY', 'NETHERLANDS', 'PORTUGAL', 'SPAIN'};
+            lLegalCurrency = contains(rStringFiltersStatic.(sCountryName).CURRENCY,rCurrentCompany.CURRENCY);
+            if sum(lLegalCurrency) == 1
+                if find(lLegalCurrency) == 2 && sum(contains(cEuro,sCountryName)) == 1
+                    rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.EURO);
+                elseif find(lLegalCurrency) == 1
+                    rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
+                end
+            end
+
+           
             % calculate the return
             rCountryStructure.(sCurrentCompanyKey).RETURN = rCurrentCompany.TRI(2:end,:)./rCurrentCompany.TRI(1:end-1,:)-1;
             %% call the dynamic screen, which calls the fDynamicDataAvailabilityFilter-function

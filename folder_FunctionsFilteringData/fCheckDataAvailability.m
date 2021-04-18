@@ -12,7 +12,7 @@ function lReturn = fCheckDataAvailability(rCompany)
     % 10 --> availability of associated stock return (calc. by tri),
     % momentum (calculated by tri), sales and cost of goods sold (cogs)
     lReturn = false;
-   
+    
     if isfield(rCompany, 'TRI') == true
         if sum(isnan(rCompany.MARKET_VALUE)) == 312 | sum(isnan(rCompany.MARKET_VALUE)) == 324
             lReturn = true;
@@ -25,11 +25,9 @@ function lReturn = fCheckDataAvailability(rCompany)
         end
     else
         lReturn = true;
-    end 
-    if isa(rCompany.MNEMONIC, 'char') == true
-                if contains(rCompany.MNEMONIC, 'TK:KAG') == true
-                    print_ret = lReturn
-                    print_leng = length(rCompany.TRI)
-                end
+    end
+    
+    if  sum(isnan(rCompany.CURRENCY)) == 1
+        lReturn = true;
     end
 end

@@ -1,6 +1,8 @@
 function fLoadRawData()
     clear; clc; 
-    save_var_error = string;
+    %% First get all countries as folders in "folder_RawData"
+    addpath(genpath('folder_FunctionsLoadingRawData'));
+
     % Get a list of all files and folders in this folder.
     sPath2RawData = append(pwd, '\', 'folder_RawData');
     rFolders = dir(sPath2RawData);
@@ -14,18 +16,18 @@ function fLoadRawData()
    
     % get amount all folder/countrie_names
     dNumberCountries = length(cCountryNames);
-
-    % cell array holding keys, representating information about companies
+    
+    %% Cell array holding keys, representating static information about companies
     cListKeys = {};
     % hardcoded, since in Datastream '$ERROR' cell values occured
     cTsKeys = {'NET_INCOME', 'COMMON_EQUITY','DEFERRED_TAXES','SALES','COGS','TOTAL_ASSETS','SG_A','RESEARCH_AND_DEVELOPMENT_COSTS','INTEREST_EXPENSES','ACCOUNTS_RECEIVABLE','INVENTORY','PREPAID_EXPENSES','DEFERRED_REVENUE','TRADE_ACCOUNTS_PAYABLE','ACCRUED_PAYROLL','OTHER_ACCRUED_EXPENSES','CURRENT_ASSETS','CASH_SHORT_TERM_INVESTMENTS','CURRENT_LIABILITIES','SHORT_TERM_DEBTS','INCOME_TAX_PAYABLE','DEPRECIATION','PREFERRED_STOCK','MINORITY_INTEREST','LONG_TERM_DEBT','MARKET_VALUE','UNADJUSTED_PRICE'};
     lBoolListKeys = false;
-
+    %% Start iterating over each country
     for i=1:dNumberCountries
         % first, get the country i and create a structure for it
-        sCurrentCountry = cell2mat(cCountryNames(i));
+        sCurrentCountry = cell2mat(cCountryNames(i));        
         rCountryStructure = struct;
-
+        
         % now open the country folder, which is organized as in the following:
         % some lists were to large --> splitted in different "PART"s
         % each list has their own "_STATIC" and "_TS" list
@@ -46,6 +48,9 @@ function fLoadRawData()
 
         % iterate over different parts
         for x=1:dAmountParts
+            % create a sub struct for each part
+            rCountryPartStructure = struct;
+            
             % create string "PART_NAME"
             sCurrentPartString = append('PART', int2str(x));
             % find files only containing "PART_NAME"
@@ -61,12 +66,29 @@ function fLoadRawData()
             % find loading path via previous bool-matrix
             sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentStaticFile)));
             [~,~,cTemp]=xlsread(sLoadString);
-            
+          
+            % check for empty rows at the end, happening for JAPAN_PART2
+            % somehow an error in excel leads to this
+            lFoundNonEmptyRow = false;
+            while lFoundNonEmptyRow == false
+                dFirstVal = cell2mat(cTemp(end,1));
+                dSecondVal = cell2mat(cTemp(end,2));
+                dThirdVal = cell2mat(cTemp(end,3));
+                if isa(dFirstVal, 'double') == true && isa(dSecondVal, 'double') == true && ...
+                        isa(dThirdVal, 'double') == true && isnan(dFirstVal) == true && ...
+                        isnan(dSecondVal) == true && isnan(dThirdVal) == true 
+                       
+                    cTemp(end,:) = [];      
+                else
+                    lFoundNonEmptyRow = true;
+                end
+            end
+
             dSizeCTemp = size(cTemp);
           
             % create list with "keys" from static request once
             if lBoolListKeys ~= true
-                for column=2:dSizeCTemp(2)
+                for column=2:17
                     cKey = cTemp(1, column);
                     cKey = fCreateKey(cKey);
                     cListKeys{end+1} = cKey;
@@ -79,42 +101,60 @@ function fLoadRawData()
                 lBoolListKeys = true;
             end
 
+            
             % now create a substruct for each company in rCountryStructure
             for row=2:dSizeCTemp(1)
                 % only take one row at a time
                 % start with using mnemonic for the key
                 cCurrentRow = cTemp(row,:);
                 sFieldToUse = cell2mat(cCurrentRow(2));
+ 
                 % otherwise use the datastream-code
-                if isnan(sFieldToUse) == true | matches(sFieldToUse, 'NA') == true | matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true
+                if isa(sFieldToUse, 'char') == true | isa(sFieldToUse, 'string') == true
+                    if matches(sFieldToUse, 'NA') == true |...
+                       matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true ...
+                       | matches(sFieldToUse, 'N/A')== true
+                        
+                        sFieldToUse = cell2mat(cCurrentRow(1));
+                    end    
+                elseif isa(sFieldToUse, 'double')== true & isnan(sFieldToUse) == true
                     sFieldToUse = cell2mat(cCurrentRow(1));
                 end
 
                 % make it to an usable string
                 sCompanyString = fStringToStructKey(sFieldToUse);
-              
+
                 % create struct.key
-                rCountryStructure.(sCompanyString) = struct;
-          
+                rCountryPartStructure.(sCompanyString) = struct;
+
                 % initialize as NaN to be able to skip empty lines in TS later
                 % on (created by datastream "$ERROR, value not found" 
                 for currentKey=1:dLenghtKeys
-                   rCountryStructure.(sCompanyString).(cell2mat(cListKeys(currentKey))) = NaN(1);
+                    rCountryPartStructure.(sCompanyString).(cell2mat(cListKeys(currentKey))) = NaN(1);
                 end
                 % load static data into strukt.key
-                for column=2:dSizeCTemp(2)
-                    cCurrentValue = cTemp(row, column);
+                for column=2:17
+                    cCurrentValue = cell2mat(cTemp(row, column));
                     sKeyString2Use = cell2mat(cListKeys(column-1));
-                    rCountryStructure.(sCompanyString).(sKeyString2Use)=cell2mat(cCurrentValue);          
+                    if isa(cCurrentValue, 'char') == true
+                        if matches(cCurrentValue, 'NA') == true | matches(cCurrentValue, '#N/A')== true | ...
+                                matches(cCurrentValue, '#NA')== true
+                            cCurrentValue = NaN;
+                        end
+                    end
+                    rCountryPartStructure.(sCompanyString).(sKeyString2Use)=cCurrentValue;          
                 end 
+                
             end
 
             % create list with all companies to iterate over them in current
             % part for ts --> another viable way would be to use
             % "struct_arrays" to use indexing, the latter was discovered close
             % before the deadline
-            cAllCompanyKeys = fieldnames(rCountryStructure);
-            dAmountCompanies = size(cAllCompanyKeys);
+            cAllCompanyKeys = fieldnames(rCountryPartStructure);
+            print = sLoadString
+            dAmountCompanies = length(cAllCompanyKeys)
+           
 
             % now load ts
             lCurrentTSFile = lCurrentPartFiles & lAllTsParts;
@@ -128,6 +168,7 @@ function fLoadRawData()
 
             % now iterate over each sheet
             for current_sheet=1:length(sSheetNames)
+            
                 sSheetString = char(sSheetNames(current_sheet));
                 % get stepsize (amount of data for each company in succession)
                 % hidden in sheetname as "..._TS_stepsize"
@@ -137,17 +178,12 @@ function fLoadRawData()
                 % load current sheet in var cTemp und cNumTemp
                 [~,~,cTemp]=xlsread(sLoadString, current_sheet);
                 % delete first column, since it only holds constant dates  
-                
-                if length(cTemp) < 25
-                    save_var_error = append(save_var_error, '___', sLoadString, '-', int2str(current_sheet));
-                else
-                    % delete first colum --> dates
-                    cTemp(:,1) = [];
-                  
-                    % get total amount colums in this sheet
-                    dColumnsCTemp = dAmountCompanies*dStepSize;
-                    
-                
+
+                cTemp(:,1) = [];
+
+                % get total amount colums in this sheet
+                dCompaniesInSheet = dAmountCompanies*dStepSize;
+                print = current_sheet
                 % counter used to count steps within step_size. reset for each
                 % sheet
                 dCounter = 1;
@@ -155,237 +191,72 @@ function fLoadRawData()
                 dIndexCurrentCompany = 1;
 
                 % iterate over colums in current sheet
-                for column=1:dColumnsCTemp
-
+                for column=1:dCompaniesInSheet
+               
                     % check first value, to skip  '#ERROR' and save time
                     sFirstValue = cell2mat(cTemp(1,column));
-                    lErrorBool = contains(sFirstValue, '#ERROR');
-
+                    if isa(sFirstValue, 'double') == true && isnan(sFirstValue) == true
+                        lErrorBool = true;
+                    else                  
+                        lErrorBool = contains(sFirstValue, '#ERROR');
+                    end
+                    
                     if lErrorBool ~= true
-                        % load column as vector holding doubles
-                        %vCurrentColumn = cell2mat(cNumTemp(:,column));
+                        % load column as vector holding doubles, replace
+                        % string with NaN
                         vCurrentColumn = cTemp(2:313,column);
-                        
+                        vCurrentColumn(cellfun(@ischar, vCurrentColumn)) = {nan};
+                        vCurrentColumn = cell2mat(vCurrentColumn);
+
                         % get current ts item key
                         sCurrentKey = cell2mat(cTsKeys(dKeyCounter+dCounter));
                         % get current company key
                         sCurrentCompanyKey = cell2mat(cAllCompanyKeys(dIndexCurrentCompany));
                         % save in sub struct
-                        rCountryStructure.(sCurrentCompanyKey).(sCurrentKey)=vCurrentColumn;
+                         rCountryPartStructure.(sCurrentCompanyKey).(sCurrentKey)=vCurrentColumn;
                     end
 
                     % if following if is true, then data for the next company
                     % is loaded and dCounter is resetted
+
                     if dCounter == dStepSize 
                         dCounter = 1;
                         % I do not know why I have to use this if here,
                         % otherwise out of bounds exception
                         if dIndexCurrentCompany < length(cAllCompanyKeys)
                             dIndexCurrentCompany = dIndexCurrentCompany + 1;
-                        end     
-                    % otherwise dCounter += 1
+                        end
+
+                        % otherwise dCounter += 1
                     else
                         dCounter = dCounter + 1;
                     end   
                 end
-                % after finishing one sheet, use the next ts-item-keys 
-                dKeyCounter = dKeyCounter + dStepSize;
-                end
+                
+            % after finishing one sheet, use the next ts-item-keys 
+            dKeyCounter = dKeyCounter + dStepSize;
             end
         end
-        
+            
+        % finally append  rCountryPartStructure to rCountryStructure        
+        cAllCompanies = fieldnames(rCountryPartStructure); 
+        for t=1:length(cAllCompanies)
+            sCompanyName = cell2mat(cAllCompanies(t));
+            rCompany =  rCountryPartStructure.(sCompanyName);
+            rCountryStructure.(sCompanyName) = rCompany;
+        end
+
         rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure);
-        
+        rCountryStructure = fLoad12MonthsTA(sPath2Country, rCountryStructure);
+
         % finally save the countrie's loaded data under 'folder_ImportedData'
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
-        sSavePath = append(pwd, '\folder_ImportedData\', sCurrentCountry, '.mat');
-        save(sSavePath, 'rCountryStructure', 'cListKeys', 'save_var_error','-v7.3');
-    end
-   
-end
-
-function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
-    % create path to tri-folder
-    sPathToTriData = append(sPath2Country, '\', 'TRI_DATA');
-    % find all parts/data in this folder
-    rFilesInTriFolder = dir(sPathToTriData);
-        
-    % now take only the true files, removing the github folders 
-    lFilesToLoad = ~[rFilesInTriFolder.isdir];
-    rFilesInTriFolder = extractfield(rFilesInTriFolder, 'name');
-    rFilesInTriFolder = rFilesInTriFolder(lFilesToLoad);
-
-    dAmountParts = length(rFilesInTriFolder)/2;
-    
-    for i=1:dAmountParts
-        % load the static order of companies and their key
-        % create string "PART_NAME"
-        sCurrentPartString = append('PART', int2str(i),'_');
-        
-        % find files only containing "PART_NAME"
-        lCurrentPartFiles = contains(rFilesInTriFolder, sCurrentPartString);
-        
-        % create bools for static/ts parts
-        lAllStaticParts = contains(rFilesInTriFolder,'STATIC');
-        lAllTsParts = contains(rFilesInTriFolder,'TS');
-
-        % start the loading process with the static files for each part,
-        % which is a bool-matrix
-        lCurrentStaticFile = lCurrentPartFiles & lAllStaticParts;
-        lCurrentTsFile =  lCurrentPartFiles & lAllTsParts;
-
-        % find loading path via previous bool-matrix
-   
-        sLoadStringStatic = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentStaticFile)));
-        sLoadStringTs = append(sPathToTriData, '\', cell2mat(rFilesInTriFolder(lCurrentTsFile)));
-        
-        % load ts and static data
-        [~,~,cTextStatic]=xlsread(sLoadStringStatic);
-        [cNumTS,~,cTextTS]=xlsread(sLoadStringTs);
-     
-        % calculate the amount of companies
-        dAmountCompaniesStatic = size(cTextStatic);
-        %dAmountCompaniesStatic = dAmountCompaniesStatic(1);
-        
-        % delete last rows if totally empty
-        counter = 0;
-        for p=1:dAmountCompaniesStatic(1)
-            lOnlyFoundNaN = true;
-            cLastRow = cTextStatic(end-p,:);
-            for c=1:dAmountCompaniesStatic(2)
-                value = cell2mat(cLastRow(c));
-                if isnan(value) == false
-                    lOnlyFoundNaN = false;
-                    break;
-                end
-            end
-            if lOnlyFoundNaN == true
-                counter = counter +1;
-            else
-                break;
-            end
-        end
-        while counter > 0
-            cTextStatic(end) = [];
-            counter = counter - 1;
-        end
-        
-        dAmountCompaniesStatic = size(cTextStatic);
-        dAmountCompaniesTs = size(cNumTS);
-        dAmountCompaniesTs = dAmountCompaniesTs(2);
-    
-        for p=2:dAmountCompaniesStatic(1)
-            % use same function for creating struct.key string
-            
-            sKey1 = cell2mat(cTextStatic(p,1));
-            sKey2 = cell2mat(cTextStatic(p,2));
-            
-            sKey1 = fStringToStructKey(sKey1);
-           
-            if ischar(sKey2) == true 
-                if matches(sKey2, 'NA') == true | matches(sKey2, '#NA')== true
-                    sKey2 = NaN;
-                    lHelper = false;
-                else
-                    sKey2 = fStringToStructKey(sKey2);
-                    lHelper = true;
-                end
-            else
-                sKey2 = fStringToStructKey(sKey2);
-                lHelper = true;
-            end
-            
-            % check if last tri-data-sets were 'ERROR' message, otherwise
-            % get tri-data
-            if p <= dAmountCompaniesTs
-                vTriData = cTextTS(2:end,p);
-            else
-                vTriData = NaN;
-            end
-            
-            % save vTriData under tri key for sCompanyKey
-            if isfield(rCountryStructure, sKey1) == true
-                rCountryStructure.(sKey1).TRI = vTriData;
-            elseif lHelper == true && isfield(rCountryStructure, sKey2) == true
-                rCountryStructure.(sKey2).TRI = vTriData;
-            end
-        end
+        fSaveCountryStructure('folder_ImportedData', sCurrentCountry, rCountryStructure);
     end
 end
 
-function sOutputString = fStringToStructKey(sInputString)
-    
-    if isstring(sInputString) ~= true
-        sInputString = string(sInputString);
-    end
-    
-    % starting with digit?
-    digit_bools = isstrprop(sInputString,'digit');
-    if length(digit_bools) > 1
-        if digit_bools(1) == 1
-        sInputString = strcat('rNumber_', sInputString);
-        end
-    end
-    % replace ':' and '.' with '_'
-    sInputString = regexprep(sInputString, ':', '_');
-    sInputString = strrep(sInputString, '.', '');
-    sInputString = strrep(sInputString, ';', '_');
-    % replace '@' with 'at_'
-    sInputString = regexprep(sInputString, '[@]', 'at_');
-    % this one removes underscores from the beginning
-    sInputString = regexprep(sInputString,'^_','','emptymatch');
-    
-    sInputString = regexprep(sInputString, ' +', '_');
-    sInputString = regexprep(sInputString, '&+', '');
-    sInputString = regexprep(sInputString, '[/]','');
-    sInputString = regexprep(sInputString, '[£]','');
-    sInputString = regexprep(sInputString, '[:]','');
-    sInputString = regexprep(sInputString, '[(]','');
-    sInputString = regexprep(sInputString, '[)]','');
-    sInputString = regexprep(sInputString, '['']','');
-    sInputString = regexprep(sInputString, '[-]','');
-    sInputString = regexprep(sInputString, '[@]', '');
-    sInputString = regexprep(sInputString, '[+]', '');
-    sInputString = regexprep(sInputString, '[$]', '');
-    sInputString = regexprep(sInputString, '[,]', '');
-    sInputString = regexprep(sInputString, '[%]', '');
-%     % this one removes underscores from the beginning
-%     string = regexprep(string,'^_','','emptymatch');
-%     string = regexprep(string,'^_','','emptymatch');
-    % since struct.keys can only be as long as 63 characters, remove rest
-    if strlength(sInputString) > 63
-        sInputString = sInputString(1:63);
-    end
-    if sInputString(1) == '_'
-        sInputString = sInputString(2:end);
-    end
-    sOutputString = sInputString;
-end
 
-function string = fCreateKey(input_cell)
-  string = cell2mat(input_cell);
-    string = regexprep(string, ' +', '_');
-    string = regexprep(string, '&+', '');
-    string = regexprep(string, '[.]','');
-    string = regexprep(string, '[/]','');
-    string = regexprep(string, '[£]','');
-    string = regexprep(string, '[:]','');
-    string = regexprep(string, '[(]','');
-    string = regexprep(string, '[)]','');
-    string = regexprep(string, '['']','');
-    string = regexprep(string, '[-]','');
-    string = regexprep(string, '[0-9]', '');
-    string = regexprep(string, '[@]', '');
-    string = regexprep(string, '[+]', '');
-    string = regexprep(string, '[$]', '');
-    string = regexprep(string, '[,]', '');
-    string = regexprep(string, '[%]', '');
-    % this one removes underscores from the beginning
-    string = regexprep(string,'^_','','emptymatch');
-    string = regexprep(string,'^_','','emptymatch');
-   
-end
 
    
   

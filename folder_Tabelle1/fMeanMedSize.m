@@ -14,8 +14,8 @@ vMonthlyMean = mean(mMVall,2,'omitnan');
 % median of market value of all firms per month
 vMonthlyMedian = median(mMVall,2,'omitnan');
 % mean of mean market value of all firms per month
-dMeanSize = round(mean(vMonthlyMean));
+dMeanSize = round(mean(vMonthlyMean,'omitnan'));
 % mean of median market value of all firms per month
-dMedianSize = round(mean(vMonthlyMedian));
+dMedianSize = round(mean(vMonthlyMedian,'omitnan'));
 end
 

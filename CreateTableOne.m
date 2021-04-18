@@ -42,15 +42,15 @@ for i=1:dNumberCountries
     % Loading the struct of the current country.
     sCurrentCountryName = cell2mat(cCountryNames(i));
     sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
-    load(sPath2Country, 'rCountryStructure')
+    rCountryStructure = fLoadCountryStructure('folder_FilteredData', sCurrentCountryName);
         
     % Get a list with all company-keys and determine amount of companies.
     cAllCompanyKeys = fieldnames(rCountryStructure);
     dAmountCompanies = length(cAllCompanyKeys);
      
 %% Rename countries    
-    % Read contry name from filename and transform it into string.
-    sName = (regexprep(sCurrentCountryName,'.mat',''));
+    % Read contry name from filename.
+    sName = sCurrentCountryName;
     % Adjusting orthography of country name using the function
     % 'fOrthography'.
     sName = fOrthography(sName);

@@ -1,22 +1,19 @@
-function [dMeanGrossProfits,dSDGrossProfits,d1stQGrossProfits,d25stQGrossProfits,d50stQGrossProfits,d75stQGrossProfits,d99stQGrossProfits,cAGrossProfit] = fGrossProfits(currentCountryStructure)
+function [vGrossProfit,cGrossProfit] = fGrossProfits(currentCountryStructure)
+%return Fieldnames to later iterate over and initiate empty cell array to
+%later add Gross profits of each company into
 cFieldNames = fieldnames(currentCountryStructure);
-cAGrossProfit={};
+cGrossProfit={};
+%start of iteration over each company
 for i =1:numel(cFieldNames)
    
-   cASales = currentCountryStructure.(cFieldNames{i}).SALES;
-   cACOGS = currentCountryStructure.(cFieldNames{i}).COGS;
-   cATotal_Assets= currentCountryStructure.(cFieldNames{i}).TOTAL_ASSETS;
-   cAGrossProfit=[cAGrossProfit; cASales-cACOGS./cATotal_Assets];
-   
+   cSales = currentCountryStructure.(cFieldNames{i}).SALES;
+   cCOGS = currentCountryStructure.(cFieldNames{i}).COGS;
+   cTotal_Assets= currentCountryStructure.(cFieldNames{i}).TOTAL_ASSETS;
+   cTotal_Assets = cTotal_Assets(13:end);%delete first 12 months
+   cZerosInTA = cTotal_Assets == 0;
+   cTotal_Assets(cZerosInTA)=NaN;
+   cGrossProfit=[cGrossProfit; cSales-cCOGS./cTotal_Assets];%calculate Gross profit of current company and add it to the already existing cell array of gross profits   
 end
-dMeanGrossProfits = mean(cell2mat(cAGrossProfit),'omitnan');
-dSDGrossProfits = std(cell2mat(cAGrossProfit),'omitnan');
-d1stQGrossProfits = quantile(cell2mat(cAGrossProfit),0.01);
-d25stQGrossProfits = quantile(cell2mat(cAGrossProfit),0.25);
-d50stQGrossProfits = quantile(cell2mat(cAGrossProfit),0.50);
-d75stQGrossProfits = quantile(cell2mat(cAGrossProfit),0.75);
-d99stQGrossProfits = quantile(cell2mat(cAGrossProfit),0.99);
-
-
+%Now calculate mean, SD and quantiles by calling fConclude function
+[vGrossProfit] = fConclude(cGrossProfit);
 end
-

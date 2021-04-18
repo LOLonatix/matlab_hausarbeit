@@ -63,10 +63,15 @@ function rReturnCountryStructure = fLoad12MonthsTA(sPath2Country,rCountryStructu
             % use same function for creating struct.key string
             cCurrentRow = cTextStatic(p,:);
             sFieldToUse = cell2mat(cCurrentRow(2));
- 
+           
             % otherwise use the datastream-code
-            if isnan(sFieldToUse) == true | matches(sFieldToUse, 'NA') == true |...
-                    matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true
+            if isa(sFieldToUse, 'char') == true | isa(sFieldToUse, 'string') == true
+                    if matches(sFieldToUse, 'NA') == true |...
+                       matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true
+                        
+                        sFieldToUse = cell2mat(cCurrentRow(1));
+                    end    
+            elseif isa(sFieldToUse, 'double') == true && isnan(sFieldToUse) == true
                 sFieldToUse = cell2mat(cCurrentRow(1));
             end
 

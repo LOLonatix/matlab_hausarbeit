@@ -36,6 +36,7 @@ function sOutputString = fStringToStructKey(sInputString)
     sInputString = regexprep(sInputString, '[%]', '');
     sInputString = regexprep(sInputString, '[#]', ''); 
     sInputString = regexprep(sInputString, '[$]', '');
+    sInputString = regexprep(sInputString, '[!]', '');
 
     % since struct.keys can only be as long as 63 characters, remove rest
     if strlength(sInputString) > 63

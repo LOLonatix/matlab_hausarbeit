@@ -1,5 +1,6 @@
 function fLoadRawData()
     clear; clc; 
+    %% First get all countries as folders in "folder_RawData"
     addpath(genpath('folder_FunctionsLoadingRawData'));
 
     % Get a list of all files and folders in this folder.
@@ -15,13 +16,13 @@ function fLoadRawData()
    
     % get amount all folder/countrie_names
     dNumberCountries = length(cCountryNames);
-
-    % cell array holding keys, representating information about companies
+    
+    %% Cell array holding keys, representating static information about companies
     cListKeys = {};
     % hardcoded, since in Datastream '$ERROR' cell values occured
     cTsKeys = {'NET_INCOME', 'COMMON_EQUITY','DEFERRED_TAXES','SALES','COGS','TOTAL_ASSETS','SG_A','RESEARCH_AND_DEVELOPMENT_COSTS','INTEREST_EXPENSES','ACCOUNTS_RECEIVABLE','INVENTORY','PREPAID_EXPENSES','DEFERRED_REVENUE','TRADE_ACCOUNTS_PAYABLE','ACCRUED_PAYROLL','OTHER_ACCRUED_EXPENSES','CURRENT_ASSETS','CASH_SHORT_TERM_INVESTMENTS','CURRENT_LIABILITIES','SHORT_TERM_DEBTS','INCOME_TAX_PAYABLE','DEPRECIATION','PREFERRED_STOCK','MINORITY_INTEREST','LONG_TERM_DEBT','MARKET_VALUE','UNADJUSTED_PRICE'};
     lBoolListKeys = false;
-
+    %% Start iterating over each country
     for i=1:dNumberCountries
         % first, get the country i and create a structure for it
         sCurrentCountry = cell2mat(cCountryNames(i));        
@@ -87,7 +88,7 @@ function fLoadRawData()
           
             % create list with "keys" from static request once
             if lBoolListKeys ~= true
-                for column=2:dSizeCTemp(2)
+                for column=2:17
                     cKey = cTemp(1, column);
                     cKey = fCreateKey(cKey);
                     cListKeys{end+1} = cKey;
@@ -109,8 +110,14 @@ function fLoadRawData()
                 sFieldToUse = cell2mat(cCurrentRow(2));
  
                 % otherwise use the datastream-code
-                if isnan(sFieldToUse) == true | matches(sFieldToUse, 'NA') == true |...
-                        matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true
+                if isa(sFieldToUse, 'char') == true | isa(sFieldToUse, 'string') == true
+                    if matches(sFieldToUse, 'NA') == true |...
+                       matches(sFieldToUse, '#N/A')== true | matches(sFieldToUse, '#NA')== true ...
+                       | matches(sFieldToUse, 'N/A')== true
+                        
+                        sFieldToUse = cell2mat(cCurrentRow(1));
+                    end    
+                elseif isa(sFieldToUse, 'double')== true & isnan(sFieldToUse) == true
                     sFieldToUse = cell2mat(cCurrentRow(1));
                 end
 
@@ -126,7 +133,7 @@ function fLoadRawData()
                     rCountryPartStructure.(sCompanyString).(cell2mat(cListKeys(currentKey))) = NaN(1);
                 end
                 % load static data into strukt.key
-                for column=2:dSizeCTemp(2)
+                for column=2:17
                     cCurrentValue = cell2mat(cTemp(row, column));
                     sKeyString2Use = cell2mat(cListKeys(column-1));
                     if isa(cCurrentValue, 'char') == true
@@ -176,7 +183,7 @@ function fLoadRawData()
 
                 % get total amount colums in this sheet
                 dCompaniesInSheet = dAmountCompanies*dStepSize;
-             
+                print = current_sheet
                 % counter used to count steps within step_size. reset for each
                 % sheet
                 dCounter = 1;
@@ -189,7 +196,7 @@ function fLoadRawData()
                     % check first value, to skip  '#ERROR' and save time
                     sFirstValue = cell2mat(cTemp(1,column));
                     if isa(sFirstValue, 'double') == true && isnan(sFirstValue) == true
-                        lErrorBool = true
+                        lErrorBool = true;
                     else                  
                         lErrorBool = contains(sFirstValue, '#ERROR');
                     end

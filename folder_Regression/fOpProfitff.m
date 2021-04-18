@@ -9,7 +9,9 @@ for i =1:numel(cFieldNames)
    cIE=currentCountryStructure.(cFieldNames{i}).INTEREST_EXPENSES;
    cBookEquity= currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
    
-   mOpProfitff=[mOpProfitff; cSales-cCOGS-cSGA-cIE./cBookEquity]; 
+   cZerosInBE = cBookEquity == 0;
+   cBookEquity(cZerosInBE)=NaN;
+   mOpProfitff=[mOpProfitff; cSales-cCOGS-cSGA-cIE./cBookEquity] ; 
    
 end
 

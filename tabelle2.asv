@@ -9,7 +9,6 @@ mGrossProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5
 mOpProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 mOpProfitff_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 mCbOpProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
-mCbGrossProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 mLogBM_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 mLogMV_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 mMomentum_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
@@ -81,7 +80,7 @@ end
 %Add all means, sd and quantiles into one array for all countries
 %gross profit arrays
 %mGrossProfit_AllCountries=[mGrossProfit_AllCountries(:),vGrossProfit(:)]
-mGrossProfit_AllCountries=horzcat(mGrossProfit_AllCountries,vGrossProfit);
+mGrossProfit_AllCountries=horzcat(mGrossProfit_AllCountries,vGrossProfit)
 %operating profitability arrays 
 mOpProfit_AllCountries=[mOpProfit_AllCountries,vOpProfit];
 %Operating profit ff
@@ -91,21 +90,14 @@ mCbOpProfit_AllCountries=[mCbOpProfit_AllCountries,vCbOpProfit];
 mCbGrossProfit_AllCountries=[mCbGrossProfit_AllCountries,vCbGrossProfit];
 mLogMV_AllCountries=[mLogMV_AllCountries,vLogMV];
 mLogBM_AllCountries=[mLogBM_AllCountries,vLogBM];
-mMomentum_AllCountries=[mMomentum_AllCountries,vMomentum];
-m1MLReturn_AllCountries=[m1MLReturn_AllCountries,v1MLReturn];
-mAccruals_AllCountries=[mAccruals_AllCountries,vAccruals];
+mMomentum_AllCountries=[mCbGrossProfit_AllCountries,vCbGrossProfit];
+m1MLReturn_AllCountries=[mCbGrossProfit_AllCountries,vCbGrossProfit];
+mAccruals_AllCountries=[mCbGrossProfit_AllCountries,vCbGrossProfit];
 end%end of for schleife
 %calculate mean of each row of each array
 vMeanGrossProfit_AllCountries=mean(mGrossProfit_AllCountries,2);
 vMeanOpProfit_AllCountries=mean(mOpProfit_AllCountries,2);
 vMeanOpProfitff_AllCountries=mean(mOpProfitff_AllCountries,2);
-vMeanCbOpProfit_AllCountries=mean(mCbOpProfit_AllCountries,2);
-vMeanCbGrossProfit_AllCountries=mean(mCbGrossProfit_AllCountries,2);
-vMeanLogMV_AllCountries=mean(mLogMV_AllCountries,2);
-vMeanLogBM_AllCountries=mean(mLogBM_AllCountries,2);
-vMeanMomentum_AllCountries=mean(mMomentum_AllCountries,2);
-%vMean1MLReturn_AllCountries=mean(m1MLReturn_AllCountries,2);
-vMeanAccruals_AllCountries=mean(mAccruals_AllCountries,2);
 %create table2; containing all values 
 tTabelle2=table(vMeanGrossProfit_AllCountries,vMeanOpProfitff_AllCountries,vMeanOpProfit_AllCountries,'VariableNames',{'GP','OPff','OP'},'RowNames',{'Mean','Standard Deviation','1% Quantiles','25% Quantiles','50% Quantiles','75% Quantiles','99% Quantiles'});
 clc;

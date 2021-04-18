@@ -3,7 +3,7 @@ cFieldNames = fieldnames(currentCountryStructure);
 vCbOpProfit=[];
 vCbOpProfit_CurrentCompany={};
 vCashBasedAdj=[];
-for i =1:numel(cOpProfit)
+for i =1:numel(cFieldNames)
     rCurrentCompany = currentCountryStructure.(cFieldNames{i});
     cTotal_Assets= rCurrentCompany.TOTAL_ASSETS;
     
@@ -22,7 +22,7 @@ for i =1:numel(cOpProfit)
         cTotal_Assets = cTotal_Assets(13:end);%delete first 12 months
         cZerosInTA = cTotal_Assets == 0;
         cTotal_Assets(cZerosInTA)=NaN;        
-        vCbOpProfit_CurrentCompany=cOpProfit{i}+vCashBasedAdj./cTotal_Assets;
+        vCbOpProfit_CurrentCompany=cell2mat(cOpProfit(i))+vCashBasedAdj./cTotal_Assets;
    end
    
    

@@ -1,4 +1,4 @@
-function [vOpProfit,cOpProfit] = fOpProfit(currentCountryStructure)
+%function [vOpProfit,cOpProfit] = fOpProfit(currentCountryStructure)
 %return Fieldnames to later iterate over and initiate empty cell array to
 %later add operating profits of each company into
 cFieldNames = fieldnames(currentCountryStructure);
@@ -15,5 +15,5 @@ for i =1:numel(cFieldNames)
 end
 %Now calculate mean, SD and quantiles by calling fConclude function
 [vOpProfit] = fConclude(cOpProfit);
-end
+%end
 

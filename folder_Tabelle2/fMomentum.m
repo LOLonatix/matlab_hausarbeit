@@ -1,4 +1,4 @@
-%function[vMomentum] = fMomentum(currentCountryStructure)
+function[vMomentum] = fMomentum(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cAMomentum={};
 for i =1:numel(cFieldNames)
@@ -18,7 +18,7 @@ for i =1:numel(cFieldNames)
 end
 [vMomentum] = fConclude(cAMomentum);
 
-%end
+end
 
 
 

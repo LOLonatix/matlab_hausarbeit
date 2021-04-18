@@ -60,13 +60,13 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
         
         % if not given, add this company to companies to be removed
         if lReturn == true
-            cCompaniesToRemove(end) = cAllCompanies(i);
+            cCompaniesToRemove(end+1) = cAllCompanies(i);
         end
     end
     
     % remove those companies
     for t=1:length(cCompaniesToRemove)
-       rCountryStructure = rmfield(rCountryStructure, cell2mat(cCompaniesToRemove(i)));
+       rCountryStructure = rmfield(rCountryStructure, cell2mat(cCompaniesToRemove(t)));
     end
     
     returnCountryStructure = rCountryStructure;

@@ -30,15 +30,16 @@ dNumberCountries = length(cCountryNames);
 for i=1:dNumberCountries
     % Loading the struct of the current country.
     sCurrentCountryName = cell2mat(cCountryNames(i));
+    sCurrentCountryName = regexprep(sCurrentCountryName, '_PART1.mat', '');
     sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
     rCountryStructure = fLoadCountryStructure('folder_FilteredData', sCurrentCountryName);
     
     %Calculate operating profitability farma and french
-    [mOpProfitff] = fOpProfitff(rCountryStructure);
+    %[mOpProfitff] = fOpProfitff(rCountryStructure);
     
     
     %Calculate operating profitability
-    [mOpProfit] = fOpProfit(rCountryStructure);
+    %[mOpProfit] = fOpProfit(rCountryStructure);
     
     %Calculate natural logarithm of the 1-month lagged market value
     [mLogMV] = fLogMV(rCountryStructure);
@@ -46,17 +47,17 @@ end
 
 %% Create stacked data set
 
-vY = mOpProfitff; %create vector of dependet variable
+%vY = mOpProfitff; %create vector of dependet variable
 
-mX = [mOpProfit, mLogMV]; %create matrix of explanatory variables
+%mX = [mOpProfit, mLogMV]; %create matrix of explanatory variables
 
 %% Estimate regression equation
 
-stats = regstats(vY,mX); 
+%stats = regstats(vY,mX); 
 
-r = stats.r;
+%r = stats.r;
 
-beta = stats.beta;
+%beta = stats.beta;
                  
 
 

@@ -27,8 +27,8 @@ function fFilterData()
     for i=1:dNumberCountries
         sCurrentCountryName = cell2mat(cCountryNames(i));
         rCountryStructure = fLoadCountryStructure('folder_ImportedData', sCurrentCountryName);
-    end
-     %% test   
+    
+
         %% start iterating over each company
         cAllCompanyKeys = fieldnames(rCountryStructure);
         dAmountCompanies = length(cAllCompanyKeys);
@@ -50,8 +50,6 @@ function fFilterData()
             if sum(lLegalCurrency) == 1
                 if find(lLegalCurrency) == 2 && sum(contains(cEuro,sCountryName)) == 1
                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.EURO);
-                    %elseif find(lLegalCurrency) == 2 && isequal(sCountryName,'RUSSIA')
-                    %rCurrentCompany = fCalculateDollarValue(rCurrentCompany,vExchangeRate);
                 elseif find(lLegalCurrency) == 1
                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
                 end
@@ -91,4 +89,5 @@ function fFilterData()
 
         %% save the filtered Data under "folder_FilteredData", depending on their size
         fSaveCountryStructure('folder_FilteredData',sCurrentCountryName, rCountryStructure);
+    end
 end

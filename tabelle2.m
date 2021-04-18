@@ -15,6 +15,7 @@ mLogMV_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quant
 mMomentum_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 m1MLReturn_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 mAccruals_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mGrowthTA_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 %load data
 
 % Get a list of all files and folders in this folder.
@@ -31,19 +32,16 @@ end
 % Get amount all folder/countrie_names.
 dNumberCountries = length(cCountryNames);
 
-% Create an empty cell array that is used as a preliminary table for
-% preallocation with the same amount of rows as countries and with 11
-% columns as the table 1 in the paper (Hanauer et al., 2018).
-cTable1=cell(dNumberCountries,11);
-
 %% Country Data
 % For-loop also copied from fFilterData up to the definition of 'sName'.
 
 for i=1:dNumberCountries
     % Loading the struct of the current country.
+     % Loading the struct of the current country.
     sCurrentCountryName = cell2mat(cCountryNames(i));
+    sCurrentCountryName = regexprep(sCurrentCountryName, '_PART1.mat', '');
     sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
-    load(sPath2Country, 'rCountryStructure');
+    rCountryStructure = fLoadCountryStructure('folder_FilteredData', sCurrentCountryName);
         
     % Get a list with all company-keys and determine amount of companies.
     cAllCompanyKeys = fieldnames(rCountryStructure);
@@ -77,6 +75,7 @@ end
 [vMomentum] = fMomentum(rCountryStructure);
 [v1MLReturn] = f1MLReturn(rCountryStructure);
 [vAccruals] = fAccruals(rCountryStructure);
+[vGrowthTA] = fGrowthTA(rCountryStructure);
 
 %Add all means, sd and quantiles into one array for all countries
 %gross profit arrays
@@ -94,6 +93,7 @@ mLogBM_AllCountries=[mLogBM_AllCountries,vLogBM];
 mMomentum_AllCountries=[mMomentum_AllCountries,vMomentum];
 m1MLReturn_AllCountries=[m1MLReturn_AllCountries,v1MLReturn];
 mAccruals_AllCountries=[mAccruals_AllCountries,vAccruals];
+mGrowthTA_AllCountries=[mGrowthTA_AllCountries,vGrowthTA];
 end%end of for schleife
 %calculate mean of each row of each array
 vMeanGrossProfit_AllCountries=mean(mGrossProfit_AllCountries,2);
@@ -104,10 +104,12 @@ vMeanCbGrossProfit_AllCountries=mean(mCbGrossProfit_AllCountries,2);
 vMeanLogMV_AllCountries=mean(mLogMV_AllCountries,2);
 vMeanLogBM_AllCountries=mean(mLogBM_AllCountries,2);
 vMeanMomentum_AllCountries=mean(mMomentum_AllCountries,2);
-%vMean1MLReturn_AllCountries=mean(m1MLReturn_AllCountries,2);
+vMean1MLReturn_AllCountries=mean(m1MLReturn_AllCountries,2);
 vMeanAccruals_AllCountries=mean(mAccruals_AllCountries,2);
+vMeanGrowthTA_AllCountries=mean(mGrowthTA_AllCountries,2);
 %create table2; containing all values 
-tTabelle2=table(vMeanGrossProfit_AllCountries,vMeanOpProfitff_AllCountries,vMeanOpProfit_AllCountries,'VariableNames',{'GP','OPff','OP'},'RowNames',{'Mean','Standard Deviation','1% Quantiles','25% Quantiles','50% Quantiles','75% Quantiles','99% Quantiles'});
+tTabelle2=table(vMeanGrossProfit_AllCountries,vMeanOpProfitff_AllCountries,vMeanOpProfit_AllCountries,vMeanCbOpProfit_AllCountries,vMeanCbGrossProfit_AllCountries,vMeanAccruals_AllCountries,vMeanLogBM_AllCountries,vMeanLogMV_AllCountries,vMean1MLReturn_AllCountries,vMeanMomentum_AllCountries,vMeanGrowthTA_AllCountries,...
+    'VariableNames',{'GP','OPff','OP','CbOP','CbGP','Accr','log(B/M)','log(MV)','r1,1','r12,2','dA/A'},'RowNames',{'Mean','Standard Deviation','1% Quantiles','25% Quantiles','50% Quantiles','75% Quantiles','99% Quantiles'});
 clc;
 
 

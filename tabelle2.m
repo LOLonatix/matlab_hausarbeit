@@ -53,6 +53,7 @@ for i = 1:numel(cFieldNames)
         rCountryStructure.(cFieldNames{i}).(vItem{j}) = mTemp;
     end
 end
+%hier start und enddatum einbauen für jedes Land, alles davor und danach löschen
 
 %calculate gross profits
 [vGrossProfit,cGrossProfit] = fGrossProfits(rCountryStructure);
@@ -73,9 +74,9 @@ end
 %mGrossProfit_AllCountries=[mGrossProfit_AllCountries(:),vGrossProfit(:)]
 mGrossProfit_AllCountries=horzcat(mGrossProfit_AllCountries,vGrossProfit)
 %operating profitability arrays 
-mOpProfit_AllCountries=[mOpProfit_AllCountries(:),vOpProfit(:)];
+mOpProfit_AllCountries=[mOpProfit_AllCountries,vOpProfit];
 %Operating profit ff
-mOpProfitff_AllCountries=[mOpProfitff_AllCountries(:),vOpProfitff(:)];
+mOpProfitff_AllCountries=[mOpProfitff_AllCountries,vOpProfitff];
 %repeat with all countries
 end%end of for schleife
 %calculate mean of each row of each array

@@ -4,7 +4,7 @@ vCbOpProfit=[];
 vCbOpProfit_CurrentCompany={};
 vCashBasedAdj=[];
 for i =1:10
- rCurrentCompany = currentCountryStructure.(cFieldNames{i});
+    rCurrentCompany = currentCountryStructure.(cFieldNames{i});
     cTotal_Assets= rCurrentCompany.TOTAL_ASSETS;
     
 %    %nun cash-based adjustments ausrechnen
@@ -18,7 +18,10 @@ for i =1:10
             cDel_AccruedExp = rCurrentCompany.ACCRUED_PAYROLL(k)+rCurrentCompany.OTHER_ACCRUED_EXPENSES(k)-rCurrentCompany.ACCRUED_PAYROLL(k)-rCurrentCompany.OTHER_ACCRUED_EXPENSES(k-12);
             vCashBasedAdj =-cDel_AccountsRec-cDel_Inventory-cDel_PrepExp+cDel_DefRevenue+cDel_TraAccPay+cDel_AccruedExp; 
         end
-        vCbOpProfit_CurrentCompany=cell2mat(cOpProfit(i))+vCashBasedAdj./rCurrentCompany.TOTAL_ASSETS;
+        cTotal_Assets = rCurrentCompany.TOTAL_ASSETS;
+        cZerosInTA = cTotal_Assets == 0;
+        cTotal_Assets(cZerosInTA)=NaN;        
+        vCbOpProfit_CurrentCompany=cell2mat(cOpProfit(i))+vCashBasedAdj./cTotalAssets;
    end
    
    

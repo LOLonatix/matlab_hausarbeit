@@ -9,10 +9,11 @@ for i =1:numel(cFieldNames)
    cSales = currentCountryStructure.(cFieldNames{i}).SALES;
    cCOGS = currentCountryStructure.(cFieldNames{i}).COGS;
    cTotal_Assets= currentCountryStructure.(cFieldNames{i}).TOTAL_ASSETS;
-   cGrossProfit=[cGrossProfit; cSales-cCOGS./cTotal_Assets];%calculate Gross profit of current company and add it to the already existing cell array of gross profits
-   
+   cTotal_Assets = cTotal_Assets(13:end);%delete first 12 months
+   cZerosInTA = cTotal_Assets == 0;
+   cTotal_Assets(cZerosInTA)=NaN;
+   cGrossProfit=[cGrossProfit; cSales-cCOGS./cTotal_Assets];%calculate Gross profit of current company and add it to the already existing cell array of gross profits   
 end
-
 %Now calculate mean, SD and quantiles by calling fConclude function
 [vGrossProfit] = fConclude(cGrossProfit);
 end

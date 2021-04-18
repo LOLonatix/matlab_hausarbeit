@@ -23,4 +23,7 @@ function lReturn = fCheckDataAvailability(rCompany)
     else
         lReturn = true;
     end 
+    if ismember(rCompany.MNEMONIC, 'TK:MMS') == true
+        print = lReturn
+    end
 end

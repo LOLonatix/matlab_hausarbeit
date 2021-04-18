@@ -26,7 +26,6 @@ function fFilterData()
     dNumberCountries = length(cCountryNames);
     for i=1:dNumberCountries
         sCurrentCountryName = cell2mat(cCountryNames(i));
-        print = sCurrentCountryName
         rCountryStructure = fLoadCountryStructure('folder_ImportedData', sCurrentCountryName);
     end
      %% test   

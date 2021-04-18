@@ -16,5 +16,8 @@ vTotalMV(vTotalMV==0) = NaN;
 % calculating the mean of the total market values and rounding to a full
 % number
 dAverageTotalSize = round(mean(vTotalMV,'omitnan'));
+if isnan(dAverageTotalSize)
+    dAverageTotalSize = 0;
+end
 end
 

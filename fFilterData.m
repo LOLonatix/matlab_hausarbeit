@@ -31,7 +31,7 @@ function fFilterData()
 
         %% start iterating over each company
         cAllCompanyKeys = fieldnames(rCountryStructure);
-        dAmountCompanies = length(cAllCompanyKeys);
+        dAmountCompanies = length(cAllCompanyKeys)
 
         % cells with company keys to be removed after the filtering process
         cCompanyKeysToBeRemoved = {};
@@ -51,7 +51,7 @@ function fFilterData()
         end
 
         %% delete the companies via their key, fi they were filtered by static filter
-        dAmountDeletableCompanies = length(cCompanyKeysToBeRemoved);
+        dAmountDeletableCompanies = length(cCompanyKeysToBeRemoved)
         for x=1:dAmountDeletableCompanies
             sCompanyKeyToRemove = cell2mat(cCompanyKeysToBeRemoved(x));
             rCountryStructure = rmfield(rCountryStructure, sCompanyKeyToRemove);

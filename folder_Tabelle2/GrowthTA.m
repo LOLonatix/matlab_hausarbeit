@@ -1,4 +1,4 @@
-%function[dMeanGrowthTA,dSDGrowthTA,d1stQGrowthTA,d25stQGrowthTA,d50stQGrowthTA,d75stQGrowthTA,d99stQGrowthTA] = fGrowthTA(currentCountryStructure)
+function[dMeanGrowthTA,dSDGrowthTA,d1stQGrowthTA,d25stQGrowthTA,d50stQGrowthTA,d75stQGrowthTA,d99stQGrowthTA] = fGrowthTA(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cAGrowthTA={};
 for i =1:5%numel(cFieldNames)
@@ -24,5 +24,5 @@ end
 % d75stQGrowthTA = quantile(cell2mat(cAGrowthTA),0.75);
 % d99stQGrowthTA = quantile(cell2mat(cAGrowthTA),0.99);
 
-%end
+end
 

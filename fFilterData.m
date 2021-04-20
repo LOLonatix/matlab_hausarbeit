@@ -31,27 +31,30 @@ function fFilterData()
 
         %% start iterating over each company
         cAllCompanyKeys = fieldnames(rCountryStructure);
-        dAmountCompanies = length(cAllCompanyKeys)
+        dAmountCompanies = length(cAllCompanyKeys);
 
         % cells with company keys to be removed after the filtering process
         cCompanyKeysToBeRemoved = {};
-
+        
+ 
         % iterate over companies
         for p=1:dAmountCompanies
             % get current key and the respective structure
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
-
+            
+            
             %% call the static filtering function fStaticScreening
             lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);
+            
             % if the company has to be removed, add it to the cell-list
             if lRemoveCompany == true
                 cCompanyKeysToBeRemoved{end+1} = sCurrentCompanyKey;
             end
         end
-
+      
         %% delete the companies via their key, fi they were filtered by static filter
-        dAmountDeletableCompanies = length(cCompanyKeysToBeRemoved)
+        dAmountDeletableCompanies = length(cCompanyKeysToBeRemoved);
         for x=1:dAmountDeletableCompanies
             sCompanyKeyToRemove = cell2mat(cCompanyKeysToBeRemoved(x));
             rCountryStructure = rmfield(rCountryStructure, sCompanyKeyToRemove);
@@ -59,7 +62,7 @@ function fFilterData()
     
         %% after deleting the companies, calculate the return and call the dynamic filters (since indices were removed, calc. length again)
         cAllCompanyKeys = fieldnames(rCountryStructure);
-        dAmountCompanies = length(cAllCompanyKeys)
+        dAmountCompanies = length(cAllCompanyKeys);
 
         for p=1:dAmountCompanies
             % get current key and the respective structure
@@ -77,18 +80,21 @@ function fFilterData()
                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
                 end
             end
-
-           
+        
+        
             % calculate the return
             rCountryStructure.(sCurrentCompanyKey).RETURN = rCurrentCompany.TRI(2:end,:)./rCurrentCompany.TRI(1:end-1,:)-1;
             %% call the dynamic screen, which calls the fDynamicDataAvailabilityFilter-function
             rCountryStructure.(sCurrentCompanyKey) = fDynamicScreening(rCountryStructure.(sCurrentCompanyKey));
+       
         end
-        print = length(fieldnames(rCountryStructure))
+        
         %% Filter for <25 companies active at a given time
         rCountryStructure = fFilter25Companies(rCountryStructure);
-
-        %% save the filtered Data under "folder_FilteredData", depending on their size
-        fSaveCountryStructure('folder_FilteredData',sCurrentCountryName, rCountryStructure);
+        
+        %% save the filtered Data under "folder_FilteredData", only if there are more then 25 companies within
+        if length(fieldnames(rCountryStructure)) >= 25
+            fSaveCountryStructure('folder_FilteredData',sCurrentCountryName, rCountryStructure);
+        end
     end
 end

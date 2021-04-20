@@ -24,7 +24,7 @@ function fLoadRawData()
     lBoolListKeys = false;
     %% Start iterating over each country
     for i=1:dNumberCountries
-        % first, get the country i and create a structure for it
+        %% first, get the country i and create a structure for it
         sCurrentCountry = cell2mat(cCountryNames(i));        
         rCountryStructure = struct;
         
@@ -32,12 +32,12 @@ function fLoadRawData()
         % some lists were to large --> splitted in different "PART"s
         % each list has their own "_STATIC" and "_TS" list
 
-        % !!!IMPORTANT!!! the order of companies are the same in the "_STATIC"
+        %% !!!IMPORTANT!!! the order of companies are the same in the "_STATIC"
         % and "_TS" lists of the same part
         sPath2Country = append(sPath2RawData, '\', sCurrentCountry);
         rFilesInCountry = dir(sPath2Country);
-        test = sPath2Country
-        % now take only the true files, removing the github folders and
+     
+        %% now take only the true files, removing the github folders and
         % tri-data folders
         lFilesToLoad = ~[rFilesInCountry.isdir];
         rFilesInCountry = extractfield(rFilesInCountry, 'name');
@@ -46,14 +46,14 @@ function fLoadRawData()
         % find amount parts by length/2 (STATIC and TS)
         dAmountParts = length(rFilesInCountry)/2;
 
-        % iterate over different parts
+        %% iterate over different parts
         for x=1:dAmountParts
             % create a sub struct for each part
             rCountryPartStructure = struct;
             
             % create string "PART_NAME"
             sCurrentPartString = append('PART', int2str(x));
-            % find files only containing "PART_NAME"
+            %% find files only containing "PART_NAME"
             lCurrentPartFiles = contains(rFilesInCountry(1:end), sCurrentPartString);
             % create bools for static/ts parts
             lAllStaticParts = contains(rFilesInCountry(1:end),'STATIC');
@@ -63,11 +63,11 @@ function fLoadRawData()
             % which is a bool-matrix
             lCurrentStaticFile = lCurrentPartFiles & lAllStaticParts;
 
-            % find loading path via previous bool-matrix
+            %% find loading path via previous bool-matrix
             sLoadString = append(sPath2Country, '\', cell2mat(rFilesInCountry(lCurrentStaticFile)));
             [~,~,cTemp]=xlsread(sLoadString);
           
-            % check for empty rows at the end, happening for JAPAN_PART2
+            %% check for empty rows at the end, happening for JAPAN_PART2
             % somehow an error in excel leads to this
             lFoundNonEmptyRow = false;
             while lFoundNonEmptyRow == false
@@ -86,7 +86,7 @@ function fLoadRawData()
 
             dSizeCTemp = size(cTemp);
           
-            % create list with "keys" from static request once
+            %% create list with "keys" from static request once
             if lBoolListKeys ~= true
                 for column=2:17
                     cKey = cTemp(1, column);
@@ -102,7 +102,7 @@ function fLoadRawData()
             end
 
             
-            % now create a substruct for each company in rCountryStructure
+            %% now create a substruct for each company in rCountryStructure
             for row=2:dSizeCTemp(1)
                 % only take one row at a time
                 % start with using mnemonic for the key
@@ -127,12 +127,12 @@ function fLoadRawData()
                 % create struct.key
                 rCountryPartStructure.(sCompanyString) = struct;
 
-                % initialize as NaN to be able to skip empty lines in TS later
+                %% initialize as NaN to be able to skip empty lines in TS later
                 % on (created by datastream "$ERROR, value not found" 
                 for currentKey=1:dLenghtKeys
                     rCountryPartStructure.(sCompanyString).(cell2mat(cListKeys(currentKey))) = NaN(1);
                 end
-                % load static data into strukt.key
+                %% load static data into strukt.key
                 for column=2:17
                     cCurrentValue = cell2mat(cTemp(row, column));
                     sKeyString2Use = cell2mat(cListKeys(column-1));
@@ -147,16 +147,15 @@ function fLoadRawData()
                 
             end
 
-            % create list with all companies to iterate over them in current
+            %% create list with all companies to iterate over them in current
             % part for ts --> another viable way would be to use
             % "struct_arrays" to use indexing, the latter was discovered close
             % before the deadline
             cAllCompanyKeys = fieldnames(rCountryPartStructure);
-            print = sLoadString
-            dAmountCompanies = length(cAllCompanyKeys)
+            dAmountCompanies = length(cAllCompanyKeys);
            
-
-            % now load ts
+         
+            %% now load ts
             lCurrentTSFile = lCurrentPartFiles & lAllTsParts;
             % the loading process into cell-var cTemp
             
@@ -166,11 +165,12 @@ function fLoadRawData()
             % generate a counter to save which trait is currently added
             dKeyCounter = 0;
 
-            % now iterate over each sheet
+            %% now iterate over each sheet in ts
             for current_sheet=1:length(sSheetNames)
-            
+               
                 sSheetString = char(sSheetNames(current_sheet));
-                % get stepsize (amount of data for each company in succession)
+                
+                %% get stepsize (amount of data for each company in succession)
                 % hidden in sheetname as "..._TS_stepsize"
                 sStepSize = strfind(sSheetString, '_TS_');
                 dStepSize = str2double(sSheetString(sStepSize+4:end));
@@ -181,16 +181,16 @@ function fLoadRawData()
 
                 cTemp(:,1) = [];
 
-                % get total amount colums in this sheet
+                %% get total amount colums in this sheet
                 dCompaniesInSheet = dAmountCompanies*dStepSize;
-                print = current_sheet
+           
                 % counter used to count steps within step_size. reset for each
                 % sheet
                 dCounter = 1;
                 % index firma currently traits added, reset for each sheet
                 dIndexCurrentCompany = 1;
 
-                % iterate over colums in current sheet
+                %% iterate over colums in current sheet
                 for column=1:dCompaniesInSheet
                
                     % check first value, to skip  '#ERROR' and save time
@@ -233,23 +233,24 @@ function fLoadRawData()
                     end   
                 end
                 
-            % after finishing one sheet, use the next ts-item-keys 
+            %% after finishing one sheet, use the next ts-item-keys 
             dKeyCounter = dKeyCounter + dStepSize;
             end
         end
             
-        % finally append  rCountryPartStructure to rCountryStructure        
+        %% finally append  rCountryPartStructure to rCountryStructure        
         cAllCompanies = fieldnames(rCountryPartStructure); 
         for t=1:length(cAllCompanies)
             sCompanyName = cell2mat(cAllCompanies(t));
             rCompany =  rCountryPartStructure.(sCompanyName);
             rCountryStructure.(sCompanyName) = rCompany;
         end
-
+        %% load tri data
         rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure);
+        %% load 12 more months of total assets
         rCountryStructure = fLoad12MonthsTA(sPath2Country, rCountryStructure);
 
-        % finally save the countrie's loaded data under 'folder_ImportedData'
+        %% finally save the countrie's loaded data under 'folder_ImportedData'
         % as a .mat file containing the respective struct
         % --> Excel Import is a bottleneck regarding the runtime
         fSaveCountryStructure('folder_ImportedData', sCurrentCountry, rCountryStructure);

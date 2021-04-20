@@ -22,6 +22,7 @@ function lReturn = fCheckDataAvailability(rCompany)
             lReturn = true;
         elseif length(rCompany.COGS) == 1 || length(rCompany.DEFERRED_TAXES) == 1 || length(rCompany.TRI) == 1
                lReturn = true;
+              
         end
     else
         lReturn = true;

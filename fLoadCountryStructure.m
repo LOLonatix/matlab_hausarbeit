@@ -17,7 +17,7 @@ function rReturnCountryStructure = fLoadCountryStructure(sPath2Data, sCountryNam
     
     %% iterate over each part, load it, and add its content to the return value
     for i=1:dParts
-        sCompletePath2Data = append(sPath2Data, sCountryName, '_PART', int2str(i))
+        sCompletePath2Data = append(sPath2Data, sCountryName, '_PART', int2str(i));
         load(sCompletePath2Data, 'rCountryStructure');
         cCompanies = fieldnames(rCountryStructure);
         dAmount = length(cCompanies);

@@ -1,6 +1,6 @@
 function returnCountryStructure = fFilter25Companies(rCountryStructure)
     
-    % get all companies
+    %% get all companies
     cAllCompanies = fieldnames(rCountryStructure);
     cCompaniesToRemove = {};
     vActiveCompanies = zeros(312,1);
@@ -13,7 +13,7 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
             vActiveCompanies = vActiveCompanies+lActiveCompany;
         end
     end
-    % create logical matrix for more then 25 companies active at given time
+    %% create logical matrix for more then 25 companies active at given time
     lActiveCompanies = vActiveCompanies >= 25;
     
     % use this matrix on all values for each company
@@ -28,7 +28,7 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
             % if it is not nan
             if length(vCurrentField) > 1
                 % if field is not tri or return
-                if p < dLength-2
+                if length(vCurrentField) == 312
                     % use lActive on the item-vector
                     vCurrentField(~lActiveCompanies) = NaN;
                
@@ -40,7 +40,7 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
                         rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = NaN;
                     end
                 % if field is tri or return  
-                else
+                elseif length(vCurrentField) == 324
                     % append logical, to shift it to one year prior
                     lActiveCompaniesAppended = lActiveCompanies;
                     lActiveCompaniesAppended(end+1:end+12) = zeros(12,1);
@@ -51,11 +51,24 @@ function returnCountryStructure = fFilter25Companies(rCountryStructure)
                     else
                         rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = NaN;
                     end
+                elseif length(vCurrentField) == 323
+                    % append logical, to shift it to one year prior
+                    lActiveCompaniesAppended = lActiveCompanies;
+                    lActiveCompaniesAppended(end+1:end+11) = zeros(11,1);
+                    % do the same thing as previously
+                    vCurrentField(~lActiveCompaniesAppended) = NaN;
+                    if sum(~isnan(vCurrentField)) > 1
+                        rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = vCurrentField;
+                    else
+                        rCountryStructure.(cell2mat(cAllCompanies(i))).(cell2mat(cItemsCompany(p))) = NaN;
+                    end
+                    
                 end
             end
         end
         
         % run static filter to remove companies with not sufficient data 
+        rCurrentCompany = rCountryStructure.(cell2mat(cAllCompanies(i)));
         lReturn = fCheckDataAvailability(rCurrentCompany);
         
         % if not given, add this company to companies to be removed

@@ -1,6 +1,12 @@
 function fSaveCountryStructure(sPath2Save, sCountryName, rInputCountryStructure)
+%% this function was deemed unneccesary after finishing the project, but not switched
     %% generate path to country folder in sPath2Save
-    sSavePath = append(pwd,'\', sPath2Save,'\', sCountryName,'\');
+    sSavePath = append(pwd,'\', sPath2Save,'\', sCountryName);
+    if isfolder(sSavePath) == false
+        mkdir(sSavePath)
+    end
+    sSavePath = append(sSavePath, '\');
+  
     %% split rCountryStructure in smaller sub-parts to not go over 2GB, by max. amount companies
     dMaxAmountCompanies = 10000;
     cCompanies = fieldnames(rInputCountryStructure);

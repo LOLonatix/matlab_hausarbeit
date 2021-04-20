@@ -13,8 +13,10 @@ function [sStartDate,sEndDate]=fStartEndDate(vFirms,tDates)
 sDateFormat = 'yyyy-mm-dd';
 % finding the positions of the active firms within the "time series of
 % active firms"
-vActive=find(vFirms);
+if sum(vFirms) ~= 0
+    vActive=find(vFirms);
 % defining the the position of the first active firm as start date
+
 dStartDate=vActive(1);
 % extracting start date from the date table at the position of the start date
 dtStart=tDates{dStartDate,1};
@@ -29,4 +31,7 @@ dEndDate=vActive(dEnd);
 dtEnd=tDates{dEndDate,(1)};
 % converting the end date into a string with the correct format
 sEndDate=datestr(dtEnd,sDateFormat);
+else
+    sStartDate = "not available"
+    sEndDate = "not available"
 end

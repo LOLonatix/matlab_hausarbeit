@@ -1,3 +1,4 @@
+function return_regression = fCreateRegression()
 %% Start script
 
 clc;clear;
@@ -58,8 +59,8 @@ stats = regstats(vY,mX);
 r = stats.r;
 
 beta = stats.beta;
-                 
-
+     return_regression = "please fill in";            
+end
 
 
 

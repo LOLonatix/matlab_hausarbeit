@@ -1,18 +1,34 @@
+%% Main script, starting all other scripts and functions, add folder_MainFiles
 clear; clc;
-% first of all, load the raw data from datastream excel sheets and save
-% each countries data as a .mat file under "folder_ImportedData"
-% --> runtime optimization, since Excel-Imports are quite slow
-% .mat contains a variable named "rCountryStructure" with country data
+addpath(genpath('folder_MainFiles'));
 
-% the other two functions in the latter part have to be "optimized"
-% (for example, even substructs starts with rÜpselGrüpsel
-% one last check whether it is working with more then 1 part is necessary
+%% First of all, load all raw data from excel files
+% It takes the excel files from folder 'folder_RawData' and saves them as a
+% .mat-file under 'folder_ImportedData'. Since the excel read takes quite
+% long, we handed the imported data in, too. The script is calling other
+% functions being saved in 'folder_FunctionsLoadingRawData'.
+b_LoadRawData;
 
-fLoadRawData();
+%% The next step is to filter all the data 
+% It loads the .mat files from 'folder_ImportedData' and filters each
+% countries data separatedly by using functions from
+% 'folder_FunctionsFilteringData'. Afterwards, it saves them in
+% 'folder_FilteredData'.
+b_FilterData;
 
-% the next step is to filter the data for each country
-fFilterData();
+%% Afterwards the function fCreateTable1 reproduces table 1 from the given paper
+% Likewise, more functions from 'folder_Tabelle1' are used. The table is
+% saved as a xlsx.
+tTable1 = fCreateTable1();
+writetable(tTable1, 'Tabelle1.xlsx');
 
-% Create table 1 using the script and reading the table variable from the
-% script output to write in an own table here in the final script.
-CreateTableOne;
+
+%% The second table is created like the first one..
+% Likewise, more functions from 'folder_Tabelle2' are used. The table is
+% saved as a xlsx.
+tTable2 = fCreateTable2();
+writetable(tTable2, 'Tabelle2.xlsx');
+
+
+%% Finally, a regression is created by the function fCreateRegression
+%regression = fCreateRegression();

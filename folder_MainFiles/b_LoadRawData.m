@@ -1,4 +1,4 @@
-function fLoadRawData()
+%% b_LoadRawData
     clear; clc; 
     %% First get all countries as folders in "folder_RawData"
     addpath(genpath('folder_FunctionsLoadingRawData'));
@@ -255,7 +255,6 @@ function fLoadRawData()
         % --> Excel Import is a bottleneck regarding the runtime
         fSaveCountryStructure('folder_ImportedData', sCurrentCountry, rCountryStructure);
     end
-end
 
 
 

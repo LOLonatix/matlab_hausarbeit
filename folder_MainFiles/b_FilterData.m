@@ -1,4 +1,4 @@
-function fFilterData()
+%% b_FilterData()
     clear; clc;
     addpath(genpath('folder_FunctionsFilteringData'));
     addpath(genpath('folder_FunctionsCurrency'));
@@ -97,4 +97,3 @@ function fFilterData()
             fSaveCountryStructure('folder_FilteredData',sCurrentCountryName, rCountryStructure);
         end
     end
-end

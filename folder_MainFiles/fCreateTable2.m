@@ -1,4 +1,5 @@
-%% Script start and setup
+function tTable2 = fCreateTable2()
+%% Function start and setup
 clear; clc;
 
 % Adding folder with functions for the table to the paths so that the
@@ -108,10 +109,10 @@ vMean1MLReturn_AllCountries=mean(m1MLReturn_AllCountries,2);
 vMeanAccruals_AllCountries=mean(mAccruals_AllCountries,2);
 vMeanGrowthTA_AllCountries=mean(mGrowthTA_AllCountries,2);
 %create table2; containing all values 
-tTabelle2=table(vMeanGrossProfit_AllCountries,vMeanOpProfitff_AllCountries,vMeanOpProfit_AllCountries,vMeanCbOpProfit_AllCountries,vMeanCbGrossProfit_AllCountries,vMeanAccruals_AllCountries,vMeanLogBM_AllCountries,vMeanLogMV_AllCountries,vMean1MLReturn_AllCountries,vMeanMomentum_AllCountries,vMeanGrowthTA_AllCountries,...
+tTable2=table(vMeanGrossProfit_AllCountries,vMeanOpProfitff_AllCountries,vMeanOpProfit_AllCountries,vMeanCbOpProfit_AllCountries,vMeanCbGrossProfit_AllCountries,vMeanAccruals_AllCountries,vMeanLogBM_AllCountries,vMeanLogMV_AllCountries,vMean1MLReturn_AllCountries,vMeanMomentum_AllCountries,vMeanGrowthTA_AllCountries,...
     'VariableNames',{'GP','OPff','OP','CbOP','CbGP','Accr','log(B/M)','log(MV)','r1,1','r12,2','dA/A'},'RowNames',{'Mean','Standard Deviation','1% Quantiles','25% Quantiles','50% Quantiles','75% Quantiles','99% Quantiles'});
 clc;
-
+end
 
 
 

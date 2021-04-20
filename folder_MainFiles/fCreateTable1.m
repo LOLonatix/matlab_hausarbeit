@@ -1,3 +1,4 @@
+function tTable1 = fCreateTable1()
 %% Table 1
 % Script used to call the functions needed to fill table 1 and in the
 % following create the table itself.
@@ -112,3 +113,4 @@ cColumnNames = {'Country','Market','Total no. firms','Min no. firms',...
 tTable1.Properties.VariableNames = cColumnNames;
 
 % TABLE 1 is complete 
+end

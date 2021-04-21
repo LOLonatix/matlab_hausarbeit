@@ -11,6 +11,11 @@ cAccruals = {};
                 cDel_Cash = rCurrentCompany.CASH_SHORT_TERM_INVESTMENTS(k)-rCurrentCompany.CASH_SHORT_TERM_INVESTMENTS(k-12);
                 cDel_CurrentLiabilities= rCurrentCompany.CURRENT_LIABILITIES(k)-rCurrentCompany.CURRENT_LIABILITIES(k-12);
                 cDel_DebtCurrentLiabilities= rCurrentCompany.SHORT_TERM_DEBTS(k)-rCurrentCompany.SHORT_TERM_DEBTS(k-12);
+                
+                print = rCurrentCompany
+                print_length = rCurrentCompany.INCOME_TAX_PAYABLE
+                print = length(rCurrentCompany.INCOME_TAX_PAYABLE)
+                
                 cDel_IncomeTaxPayable= rCurrentCompany.INCOME_TAX_PAYABLE(k)-rCurrentCompany.INCOME_TAX_PAYABLE(k-12);
                 cDel_Depreciation= rCurrentCompany.DEPRECIATION(k)-rCurrentCompany.DEPRECIATION(k-12);
                 cZaehler = cDel_CurrentAssets-cDel_Cash-cDel_CurrentLiabilities+cDel_DebtCurrentLiabilities+cDel_IncomeTaxPayable-cDel_Depreciation;

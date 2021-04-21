@@ -1,4 +1,3 @@
-function return_regression = fCreateRegression()
 %% Start script
 
 clc;clear;
@@ -48,14 +47,16 @@ end
 
 %% Create stacked data set
 
-%delete NaNs if mOpProfitff, mOpProfit and mLogMV have NaNs in the same row
-for i = numel(mOpProfitff):-1:1
+k= 
+
+for i = 1:numel(mOpProfitff)
    
     if isnan(mOpProfitff(i)) == 1 & isnan(mOpProfit(i)) == 1 & isnan(mLogMV(i)) == 1
         
-        mOpProfitff(i) = [];
-        mOpProfit(i) = [];
-        mLogMV(i) = [];
+        
+        mOpProfitff(i) = 2.1234;
+        mOpProfit(i) = 2.1234;
+        mLogMV(i) = 2.1234;
         
     end
     
@@ -68,13 +69,13 @@ mX = [mOpProfit, mLogMV]; %create matrix of explanatory variables
 
 %% Estimate regression equation
 
-stats = regstats(vY,mX); 
+%stats = regstats(vY,mX); 
 
-r = stats.r;
+%r = stats.r;
 
-beta = stats.beta;
-     return_regression = "please fill in";            
-end
+%beta = stats.beta;
+                 
+
 
 
 

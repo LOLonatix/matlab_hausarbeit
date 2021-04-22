@@ -6,14 +6,14 @@ clear; clc;
 % functions can be used.
 addpath(genpath('folder_Tabelle2'));
 %create arrays that are later being filled?
-mGrossProfit_AllCountries = [];%leerer vektor
-mOpProfit_AllCountries = [];
-mOpProfitff_AllCountries = [];
-mCbOpProfit_AllCountries = [];
-mCbGrossProfit_AllCountries = [];
-mLogBM_AllCountries = [];
-mLogMV_AllCountries = [];
-mMomentum_AllCountries = [];
+mGrossProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mOpProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mOpProfitff_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mCbOpProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mCbGrossProfit_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mLogBM_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mLogMV_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
+mMomentum_AllCountries = [];%leerer vektor; sieben nullen für mean, sd und 5 quantiles
 m1MLReturn_AllCountries = [];
 mAccruals_AllCountries = [];
 mGrowthTA_AllCountries = [];
@@ -40,6 +40,8 @@ for i=1:dNumberCountries
     % Loading the struct of the current country.
      % Loading the struct of the current country.
     sCurrentCountryName = cell2mat(cCountryNames(i));
+    sCurrentCountryName = regexprep(sCurrentCountryName, '_PART1.mat', '');
+    sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
     rCountryStructure = fLoadCountryStructure('folder_FilteredData', sCurrentCountryName);
         
     % Get a list with all company-keys and determine amount of companies.
@@ -49,7 +51,7 @@ for i=1:dNumberCountries
 %replace NaNs with 0s
 cFieldNames = fieldnames(rCountryStructure);
 vItem = {'TRI'};
-for i = 1:numel(cFieldNames)
+for i = 1:numel(cFieldNames);
     for j = 1:numel(vItem)
         mTemp = rCountryStructure.(cFieldNames{i}).(vItem{j});
         mTemp(isnan(mTemp))=0;        

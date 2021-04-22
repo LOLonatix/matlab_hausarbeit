@@ -41,8 +41,7 @@ cTable1=cell(dNumberCountries,11);
 
 for i=1:dNumberCountries
     % Loading the struct of the current country.
-    sCurrentCountryName = cell2mat(cCountryNames(i));
-    sPath2Country = append(sPath2ImportedData, sCurrentCountryName);  
+    sCurrentCountryName = cell2mat(cCountryNames(i));  
     rCountryStructure = fLoadCountryStructure('folder_FilteredData', sCurrentCountryName);
         
     % Get a list with all company-keys and determine amount of companies.

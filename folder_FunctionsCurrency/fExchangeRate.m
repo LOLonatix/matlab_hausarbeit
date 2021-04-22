@@ -85,7 +85,7 @@ end
 
 % Divide exchange rates for Denmark by 100, because they were provided for
 % Kronen per 100 US Dollar
-rExchangeRate.DENMARK = rExchangeRate.DENMARK./100
+rExchangeRate.DENMARK = rExchangeRate.DENMARK./100;
 
 % Save data for process speed up
 save('rExchangeRate.mat','rExchangeRate')

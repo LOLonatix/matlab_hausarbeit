@@ -11,7 +11,7 @@ for i =1:numel(cFieldNames)
    %hier weiter
    cZerosInBE = cBookEquity == 0;
    cBookEquity(cZerosInBE)=NaN;
-   cOpProfitff=[cOpProfitff; cSales-cCOGS-cSGA-cIE./cBookEquity] ; 
+   cOpProfitff=[cOpProfitff; (cSales-cCOGS-cSGA-cIE)./cBookEquity] ; 
 end
 [vOpProfitff] = fConclude(cOpProfitff)
 end

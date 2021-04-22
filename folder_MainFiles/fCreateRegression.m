@@ -1,4 +1,4 @@
-function return_regression = fCreateRegression()
+function [tTable_Regression1, tTable_Regression2, tTable_Regression3] = fCreateRegression()
 %% Start script
 
 clc;clear;
@@ -44,6 +44,7 @@ for i=1:dNumberCountries
     
     %Calculate natural logarithm of the 1-month lagged market value
     [mLogMV] = fLogMV(rCountryStructure);
+    
 end
 
 %% Create stacked data set
@@ -61,8 +62,7 @@ for i = numel(mOpProfitff):-1:1
     
 end
 
-
-vY = mOpProfitff; %create vector of dependet variable
+vY = mOpProfitff; %create vector of dependent variable
 
 mX = [mOpProfit, mLogMV]; %create matrix of explanatory variables
 
@@ -70,11 +70,31 @@ mX = [mOpProfit, mLogMV]; %create matrix of explanatory variables
 
 stats = regstats(vY,mX); 
 
-r = stats.r;
+%% Create Regression Tables
 
-beta = stats.beta;
-     return_regression = "please fill in";            
+Table_Input_Data = {'Dependent Variable';'Method';'Included Observations'; 'Constant b0'};
+
+Input = {'OpProfitFF';'Least Squares';numel(mOpProfitff); stats.beta(1)};
+
+%Create Table of input Data for regression
+tTable_Regression1 = table(Table_Input_Data, Input);
+
+Explanatory_Variable = {'OpProfit'; 'log(MV)'};
+
+Coefficients = {stats.beta(2); stats.beta(3)};
+
+t_Statistics = {stats.tstat.t(2); stats.tstat.t(3)};
+
+%Create Table of output Data for regression
+tTable_Regression2 = table(Explanatory_Variable, Coefficients, t_Statistics);  
+
+Table_Output_Data = {'Mean squared error';'R-squared';'F-Statistic';'Durbin-Watson Statistic'};
+
+Output = {stats.mse; stats.rsquare; stats.fstat.f; stats.dwstat.dw};
+
+%Create Table of additional output Data for regression
+tTable_Regression3 = table(Table_Output_Data, Output);
+
 end
-
 
 

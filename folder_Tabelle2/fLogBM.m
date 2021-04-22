@@ -1,6 +1,6 @@
 function[vLogBM] = fLogBM(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
-cLogBM={};
+cLogBM=[];
 for i =1:numel(cFieldNames)
    
    cBookValue = currentCountryStructure.(cFieldNames{i}).COMMON_EQUITY;
@@ -9,6 +9,8 @@ for i =1:numel(cFieldNames)
         cLogBM_CurrentCompany= log(cBookValue./cMarketValue);
    end
    cLogBM=[cLogBM; cLogBM_CurrentCompany];
+   cLogBM(isinf(cLogBM))=NaN;
+   cLogBM = real(cLogBM);
 end
 [vLogBM] = fConclude(cLogBM);
 end

@@ -14,7 +14,7 @@ for i =1:numel(cFieldNames)
    cBookEquity(cZerosInBE)=NaN;
    cOpProfitff=[cOpProfitff; (cSales-cCOGS-cSGA-cIE)./cBookEquity] ; %append new value to existing values
 end
-[vOpProfitff] = fConclude(cOpProfitff)%call conclude function to summarize
+[vOpProfitff] = fConclude(cOpProfitff);%call conclude function to summarize
 end
 
 

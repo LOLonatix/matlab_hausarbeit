@@ -1,8 +1,9 @@
 function rStringFiltersStatic = fCreateFilterStrings(cCountryNames)
+%% create country depending filter strings for static filtering
     addpath(genpath('folder_FunctionsCurrency'));
     rStringFiltersStatic = struct;
     rID = fIDStruct();
-    
+    %% iterate over each country and get their codes
     dAmountCountries = length(cCountryNames);
     for i=1:dAmountCountries
         sCountryName = (regexprep(cCountryNames{i},'.mat',''));
@@ -13,10 +14,10 @@ function rStringFiltersStatic = fCreateFilterStrings(cCountryNames)
         rStringFiltersStatic.(sCountryName).COUNTRY_SPECIFIC_FILTER = NaN;
     end
     
-    % create a list with the generic keywords for filtering
+    %% create a list with the generic keywords for filtering
     rStringFiltersStatic.GenericKeywords = ["1000DUPL", "DULP", "DUP", "DUPE", "DUPL", "DUPLI","DUPLICATE", "XSQ", "XETa", "ADR", "GDR", "PF", "’PF’", "PFD", "PREF", "PREFERRED", "PRF", "WARR", "WARRANT", "WARRANTS", "WARRT", "WT", "WTS","WTS2", "%", "DB", "DCB", "DEB", "DEBENTURE", "DEBENTURES", "DEBT", ".IT", ".ITb", "INV", "INV TST", "INVESTMENT TRUST","RLST IT", "TRUST", "TRUST UNIT", "TRUST UNITS", "TST","TST UNIT", "TST UNITS", "UNIT", "UNIT TRUST", "UNITS","UNT", "UNT TST", "UT", "AMUNDI", "ETF", "INAV", "ISHARES", "JUNGE", "LYXOR", "X-TR", "EXPD", "EXPIRED", "EXPIRY", "EXPY", "ADS", "BOND", "CAP.SHS", "CONV", "CV", "CVT", "DEFER","DEP", "DEPY", "ELKS", "FD", "FUND", "GW.FD", "HI.YIELD","HIGH INCOME", "IDX", "INC.&GROWTH", "INC.&GW","INDEX", "LP", "MIPS", "MITS", "MITT, MPS", "NIKKEI", "NOTE","OPCVM", "ORTF", "PARTNER", "PERQS", "PFC", "PFCL", "PINES", "PRTF", "PTNS", "PTSHP", "QUIBS", "QUIDS", "RATE", "RCPTS", "REAL EST", "RECEIPTS", "REIT", "RESPT", "RETUR", "RIGHTS", "RST", "RTN.INC", "RTS", "SBVTG", "SCORE", "SPDR", "STRYPES", "TOPRS", "UTS", "VCT", "VTG.SAS", "XXXXX", "YIELD", "YLD"];
     
-    % add a list with country specific keywords for filtering
+    %% add a list with country specific keywords for filtering
     rStringFiltersStatic.AUSTRALIA.COUNTRY_SPECIFIC_FILTER = ["PART PAID", "RTS DEF", "DEF SETT", "CDI"];
     rStringFiltersStatic.AUSTRIA.COUNTRY_SPECIFIC_FILTER = ["PC", "PARTICIPATION CERTIFICATE", "GENUSSSCHEINE", "GENUSSCHEINE"];
     rStringFiltersStatic.BELGIUM.COUNTRY_SPECIFIC_FILTER = ["VVPR", "CONVERSION", "STRIP"];

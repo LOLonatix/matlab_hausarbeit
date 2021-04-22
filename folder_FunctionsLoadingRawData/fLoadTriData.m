@@ -10,7 +10,7 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
     rFilesInTriFolder = rFilesInTriFolder(lFilesToLoad);
 
     dAmountParts = length(rFilesInTriFolder)/2;
-    
+    counter = 0;
     for i=1:dAmountParts
         % load the static order of companies and their key
         % create string "PART_NAME"
@@ -38,35 +38,30 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
         [cNumTS,~,cTextTS]=xlsread(sLoadStringTs);
      
         % calculate the amount of companies
-        dAmountCompaniesStatic = size(cTextStatic);
+        dAmountCompaniesStatic = size(cTextStatic)
         %dAmountCompaniesStatic = dAmountCompaniesStatic(1);
         
         % delete last rows if totally empty
-        counter = 0;
-        for p=1:dAmountCompaniesStatic(1)
-            lOnlyFoundNaN = true;
-            cLastRow = cTextStatic(end-p,:);
-            for c=1:dAmountCompaniesStatic(2)
-                value = cell2mat(cLastRow(c));
-                if isnan(value) == false
-                    lOnlyFoundNaN = false;
-                    break;
-                end
-            end
-            if lOnlyFoundNaN == true
-                counter = counter +1;
+        % check for empty rows at the end, happening for JAPAN_PART2
+        % somehow an error in excel leads to this
+        lFoundNonEmptyRow = false;
+        while lFoundNonEmptyRow == false
+            dFirstVal = cell2mat(cTextStatic(end,1));
+            dSecondVal = cell2mat(cTextStatic(end,2));
+            dThirdVal = cell2mat(cTextStatic(end,3));
+            if isa(dFirstVal, 'double') == true && isa(dSecondVal, 'double') == true && ...
+                    isa(dThirdVal, 'double') == true && isnan(dFirstVal) == true && ...
+                    isnan(dSecondVal) == true && isnan(dThirdVal) == true 
+                cTextStatic(end,:) = [];      
             else
-                break;
+                lFoundNonEmptyRow = true;
             end
-        end
-        while counter > 0
-            cTextStatic(end) = [];
-            counter = counter - 1;
         end
         
-        dAmountCompaniesStatic = size(cTextStatic);
-        dAmountCompaniesTs = size(cNumTS);
-        dAmountCompaniesTs = dAmountCompaniesTs(2);
+        dAmountCompaniesStatic = size(cTextStatic)
+       
+        dAmountCompaniesTs = size(cNumTS)
+        dAmountCompaniesTs = dAmountCompaniesTs(2)
     
         for p=2:dAmountCompaniesStatic(1)
             % use same function for creating struct.key string
@@ -99,6 +94,7 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
             else
                 vTriData = NaN;
             end
+           
             
             % save vTriData under tri key for sCompanyKey
             if isfield(rCountryStructure, sKey1) == true
@@ -108,4 +104,5 @@ function rCountryStructure = fLoadTriData(sPath2Country, rCountryStructure)
             end
         end
     end
+
 end

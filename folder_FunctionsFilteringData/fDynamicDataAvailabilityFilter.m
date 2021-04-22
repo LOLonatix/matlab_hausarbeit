@@ -37,6 +37,11 @@ function rReturnCompany = fDynamicDataAvailabilityFilter(rCompany)
             lFilter2Use = [zeros(11,1); lLogicalFilter];
             vField(~lFilter2Use) = NaN;
         end
+        
+        if sum(isnan(vField)) == length(vField)
+            vField = NaN;
+        end
+        
         rCompany.(sFieldName) = vField;
     end
     

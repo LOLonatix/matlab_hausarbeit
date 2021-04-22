@@ -1,11 +1,11 @@
 function [vAccruals] = fAccruals(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cAccruals = {};
-    for i=1:numel(cFieldNames)
+    for i=1:numel(cFieldNames)%start iteration over all firms of a country
         rCurrentCompany = currentCountryStructure.(cFieldNames{i});
         sKeys = ["CURRENT_ASSETS","CASH_SHORT_TERM_INVESTMENTS","CURRENT_LIABILITIES","SHORT_TERM_DEBTS","INCOME_TAX_PAYABLE","DEPRECIATION"];
-        %nun zähler ausrechnen
-
+        
+        %nans raussuchen und ggf ersetzen
        if length(rCurrentCompany.TOTAL_ASSETS) >1 
         vTotal_Assets= rCurrentCompany.TOTAL_ASSETS;
         for p = 1:length(sKeys)
@@ -18,7 +18,7 @@ cAccruals = {};
              rCurrentCompany.(sKeys(p))= vToChange;
         end        
         
-        
+        %alle werte des zählers ausrechnen
         cDel_CurrentAssets = rCurrentCompany.CURRENT_ASSETS(13:end,:)-rCurrentCompany.CURRENT_ASSETS(1:300,:);                
         cDel_Cash = rCurrentCompany.CASH_SHORT_TERM_INVESTMENTS(13:end,:)-rCurrentCompany.CASH_SHORT_TERM_INVESTMENTS(1:300,:);
         cDel_CurrentLiabilities= rCurrentCompany.CURRENT_LIABILITIES(13:end,:)-rCurrentCompany.CURRENT_LIABILITIES(1:300,:);
@@ -32,6 +32,6 @@ cAccruals = {};
        end
         end              
     
-[vAccruals] = fConclude(cAccruals);
+[vAccruals] = fConclude(cAccruals);%conclude aufrufen 
 end
 

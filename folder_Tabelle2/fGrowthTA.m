@@ -1,22 +1,22 @@
 function[vGrowthTA] = fGrowthTA(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
-cAGrowthTA={};
-cAGrowthTA_CurrentCompany = {};
-for i =1:numel(cFieldNames)
+cGrowthTA={};
+cGrowthTA_CurrentCompany = {};%cell array bietet bessere übersichtlichkeit als normaler array, deswegen in vielen funktionen zur Tabelle 2 genutzt
+for i =1:numel(cFieldNames)%start iteration für alle länder
     
    rCurrentCompany = currentCountryStructure.(cFieldNames{i});
-   if length(rCurrentCompany.TOTAL_ASSETS)>1
-        cATotalAssets = rCurrentCompany.TOTAL_ASSETS;
+   if length(rCurrentCompany.TOTAL_ASSETS)>1%falls total asset werte vorhanden sind
+        cTotalAssets = rCurrentCompany.TOTAL_ASSETS;
 
-       cAdA_TotalAssets = rCurrentCompany.TOTAL_ASSETS(13:312,1)-rCurrentCompany.TOTAL_ASSETS(1:300,:);
-       cAA_TotalAssets = rCurrentCompany.TOTAL_ASSETS(13:312,1);
-       cAGrowthTA_CurrentCompany = cAdA_TotalAssets/cAA_TotalAssets;      
+       cdA_TotalAssets = rCurrentCompany.TOTAL_ASSETS(13:312,1)-rCurrentCompany.TOTAL_ASSETS(1:300,:);%die veränderung über ein Jahr nehmen
+       cA_TotalAssets = rCurrentCompany.TOTAL_ASSETS(13:312,1);
+       cGrowthTA_CurrentCompany = cdA_TotalAssets/cA_TotalAssets;      
 
-       cAGrowthTA=[cAGrowthTA; cAGrowthTA_CurrentCompany];%add together Growth in total assets of previous firms with current firm's
+       cGrowthTA=[cGrowthTA; cGrowthTA_CurrentCompany];%add together Growth in total assets of previous firms with current firm's
    end
 end
 
-[vGrowthTA] = fConclude(cAGrowthTA);
+[vGrowthTA] = fConclude(cGrowthTA);
 vGrowthTA = mean(vGrowthTA,2);
 
 end

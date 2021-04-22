@@ -1,4 +1,4 @@
-%function [vAccruals] = fAccruals(currentCountryStructure)
+function [vAccruals] = fAccruals(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
 cAccruals = {};
     for i=1:numel(cFieldNames)
@@ -33,5 +33,5 @@ cAccruals = {};
         end              
     
 [vAccruals] = fConclude(cAccruals);
-%end
+end
 

@@ -1,6 +1,6 @@
 function[vMomentum] = fMomentum(currentCountryStructure)
 cFieldNames = fieldnames(currentCountryStructure);
-cAMomentum={};
+cMomentum=[];
 for i =1:numel(cFieldNames)
    rCurrentCompany = currentCountryStructure.(cFieldNames{i});
    %tri daten einlesen
@@ -13,10 +13,10 @@ for i =1:numel(cFieldNames)
    mMomentum = mMomentum(13:end);
    % an bestehenden cell Array appenden, array wird zu cell array (bessere
    % übersichtlichkeit)
-   cAMomentum = [cAMomentum; mMomentum];
-     
+   cMomentum = [cMomentum; mMomentum];
+   cMomentum(isinf(cMomentum))=NaN;  
 end
-[vMomentum] = fConclude(cAMomentum);
+[vMomentum] = fConclude(cMomentum);
 
 end
 

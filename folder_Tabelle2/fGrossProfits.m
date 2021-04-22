@@ -1,4 +1,4 @@
-function [vGrossProfit,cGrossProfit] = fGrossProfits(currentCountryStructure)
+function [vGrossProfit,cGrossProfit] = fGrossProfits(currentCountryStructure);
 %return Fieldnames to later iterate over and initiate empty cell array to
 %later add Gross profits of each company into
 cFieldNames = fieldnames(currentCountryStructure);

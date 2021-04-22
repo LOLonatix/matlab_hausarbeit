@@ -88,5 +88,6 @@ end
 rExchangeRate.DENMARK = rExchangeRate.DENMARK./100;
 
 % Save data for process speed up
-save('rExchangeRate.mat','rExchangeRate')
+sPath = append(pwd, '\folder_FunctionsCurrency\rExchangeRate.mat');
+save(sPath,'rExchangeRate');
 end

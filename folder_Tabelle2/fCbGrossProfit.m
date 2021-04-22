@@ -3,10 +3,10 @@ cFieldNames = fieldnames(currentCountryStructure);
 vCbGrossProfit=[];
 vCbGrossProfit_CurrentCompany={};
 vCashBasedAdj=[];
-for i =1:numel(cGrossProfit)
+for i =1:numel(cGrossProfit)%start iteration aller länder
    rCurrentCompany = currentCountryStructure.(cFieldNames{i});
         sKeys = ["ACCOUNTS_RECEIVABLE","INVENTORY","PREPAID_EXPENSES","DEFERRED_REVENUE","TRADE_ACCOUNTS_PAYABLE","OTHER_ACCRUED_EXPENSES"...
-            "ACCRUED_PAYROLL"];
+            "ACCRUED_PAYROLL"];%alle skeys checken ob sie evtl nur aus einem Nan bestehen. ggf durch0-vektor ersetzen
         %nun zähler ausrechnen
         if length(rCurrentCompany.TOTAL_ASSETS) >1 
         vTotal_Assets= rCurrentCompany.TOTAL_ASSETS;
@@ -30,14 +30,14 @@ for i =1:numel(cGrossProfit)
             vCashBasedAdj =-cDel_AccountsRec-cDel_Inventory-cDel_PrepExp+cDel_DefRevenue+cDel_TraAccPay+cDel_AccruedExp; 
         
         cTotal_Assets = rCurrentCompany.TOTAL_ASSETS;
-        cTotal_Assets = cTotal_Assets(25:end);%delete first 12 months
+        cTotal_Assets = cTotal_Assets(25:end);%delete first 24 months
         vOpProfit = cGrossProfit{i};
         vOpProfit = vOpProfit(13:end);
         cZerosInTA = cTotal_Assets == 0;
         cTotal_Assets(cZerosInTA)=NaN;        
         vCbGrossProfit_CurrentCompany=(vOpProfit+vCashBasedAdj)./cTotal_Assets;  
    
-    vCbGrossProfit = [vCbGrossProfit; vCbGrossProfit_CurrentCompany];
+    vCbGrossProfit = [vCbGrossProfit; vCbGrossProfit_CurrentCompany];%bestehende werte + neue werte
    
 end
 [vCbGrossProfit] = fConclude(vCbGrossProfit);

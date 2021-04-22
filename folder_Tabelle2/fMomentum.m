@@ -14,7 +14,7 @@ for i =1:numel(cFieldNames)
    % an bestehenden cell Array appenden, array wird zu cell array (bessere
    % übersichtlichkeit)
    cMomentum = [cMomentum; mMomentum];
-   cMomentum(isinf(cMomentum))=NaN;  
+   cMomentum(isinf(cMomentum))=NaN;  %infinities ersetzen durch Nans
 end
 [vMomentum] = fConclude(cMomentum);
 

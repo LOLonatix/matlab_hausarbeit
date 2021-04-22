@@ -2,7 +2,7 @@ function [vGrossProfit,cGrossProfit] = fGrossProfits(currentCountryStructure);
 %return Fieldnames to later iterate over and initiate empty cell array to
 %later add Gross profits of each company into
 cFieldNames = fieldnames(currentCountryStructure);
-cGrossProfit={};
+cGrossProfit={};%cell array bietet besser übersichtlichkeit als normaler array der 50000 Stellen lang ist
 %start of iteration over each company
 for i =1:numel(cFieldNames)
    

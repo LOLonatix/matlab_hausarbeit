@@ -27,7 +27,7 @@
     for i=1:dNumberCountries
         sCurrentCountryName = cell2mat(cCountryNames(i));
         rCountryStructure = fLoadCountryStructure('folder_ImportedData', sCurrentCountryName);
-    
+        print = sCurrentCountryName
 
         %% start iterating over each company
         cAllCompanyKeys = fieldnames(rCountryStructure);
@@ -36,14 +36,12 @@
         % cells with company keys to be removed after the filtering process
         cCompanyKeysToBeRemoved = {};
         
- 
         % iterate over companies
         for p=1:dAmountCompanies
             % get current key and the respective structure
             sCurrentCompanyKey = cell2mat(cAllCompanyKeys(p));
             rCurrentCompany = rCountryStructure.(sCurrentCompanyKey);
-            
-            
+       
             %% call the static filtering function fStaticScreening
             lRemoveCompany = fStaticScreening(rCurrentCompany, sCurrentCountryName, rStringFiltersStatic);
             
@@ -80,8 +78,7 @@
                     rCurrentCompany = fCalculateDollarValue(rCurrentCompany,rExchangeRate.(sCountryName));
                 end
             end
-        
-        
+     
             % calculate the return
             rCountryStructure.(sCurrentCompanyKey).RETURN = rCurrentCompany.TRI(2:end,:)./rCurrentCompany.TRI(1:end-1,:)-1;
             %% call the dynamic screen, which calls the fDynamicDataAvailabilityFilter-function

@@ -26,7 +26,7 @@ b_FilterData;
 %% The second table is created like the first one..
 % Likewise, more functions from 'folder_Tabelle2' are used. The table is
 % saved as a xlsx.
-tTable2 = fCreateTable2();
+%tTable2 = fCreateTable2();
 %writetable(tTable2, 'Tabelle2.xlsx');
 
 
